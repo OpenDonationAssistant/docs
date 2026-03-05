@@ -2,3 +2,184 @@
 title: "Аутентификация"
 sidebarTitle: "Аутентификация"
 ---
+
+## Keycloak Login and Refresh Token
+
+### Direct Login Request
+
+```javascript
+async function loginToKeycloak() {
+  const params = new URLSearchParams();
+  params.append('grant_type', 'password');
+  params.append('client_id', 'your-client-id');
+  params.append('client_secret', 'your-client-secret');
+  params.append('username', 'your-username');
+  params.append('password', 'your-password');
+
+  const response = await fetch('http://localhost:8080/realms/your-realm/protocol/openid-connect/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: params
+  });
+
+  const data = await response.json();
+  
+  if (response.ok) {
+    console.log('Access Token:', data.access_token);
+    console.log('Refresh Token:', data.refresh_token);
+    console.log('Expires in:', data.expires_in);
+    return data;
+  } else {
+    console.error('Login failed:', data.error_description);
+    throw new Error(data.error_description);
+  }
+}
+```
+
+### Refresh Token Request
+
+```javascript
+async function refreshAccessToken(refreshToken) {
+  const params = new URLSearchParams();
+  params.append('grant_type', 'refresh_token');
+  params.append('client_id', 'your-client-id');
+  params.append('client_secret', 'your-client-secret');
+  params.append('refresh_token', refreshToken);
+
+  const response = await fetch('http://localhost:8080/realms/your-realm/protocol/openid-connect/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: params
+  });
+
+  const data = await response.json();
+  
+  if (response.ok) {
+    console.log('New Access Token:', data.access_token);
+    console.log('New Refresh Token:', data.refresh_token);
+    return data;
+  } else {
+    console.error('Refresh failed:', data.error_description);
+    throw new Error(data.error_description);
+  }
+}
+```
+
+### Using with STOMP Connection
+
+```javascript
+let accessToken = '';
+let refreshToken = '';
+
+async function connectToSTOMP() {
+  const tokens = await loginToKeycloak();
+  accessToken = tokens.access_token;
+  refreshToken = tokens.refresh_token;
+
+  const client = new Client({
+    brokerURL: 'ws://localhost:8080/ws',
+    connectHeaders: {
+      'Authorization': `Bearer ${accessToken}`
+    },
+    onConnect: () => {
+      console.log('Connected with Keycloak token');
+      client.subscribe('/topic/your-topic', message => {
+        console.log('Received:', message.body);
+      });
+    }
+  });
+
+  client.activate();
+}
+
+async function refreshTokenAndReconnect() {
+  const tokens = await refreshAccessToken(refreshToken);
+  accessToken = tokens.access_token;
+  if (tokens.refresh_token) {
+    refreshToken = tokens.refresh_token;
+  }
+  
+  // Reconnect with new token
+  client.deactivate();
+  connectToSTOMP();
+}
+```
+
+### Token Auto-Refresh
+
+```javascript
+class TokenManager {
+  constructor(clientId, clientSecret, realm) {
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+    this.realm = realm;
+    this.accessToken = '';
+    this.refreshToken = '';
+    this.expiresAt = 0;
+  }
+
+  async login(username, password) {
+    const params = new URLSearchParams();
+    params.append('grant_type', 'password');
+    params.append('client_id', this.clientId);
+    params.append('client_secret', this.clientSecret);
+    params.append('username', username);
+    params.append('password', password);
+
+    const response = await fetch(`http://localhost:8080/realms/${this.realm}/protocol/openid-connect/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params
+    });
+
+    const data = await response.json();
+    this.accessToken = data.access_token;
+    this.refreshToken = data.refresh_token;
+    this.expiresAt = Date.now() + (data.expires_in * 1000);
+    return data;
+  }
+
+  async refresh() {
+    const params = new URLSearchParams();
+    params.append('grant_type', 'refresh_token');
+    params.append('client_id', this.clientId);
+    params.append('client_secret', this.clientSecret);
+    params.append('refresh_token', this.refreshToken);
+
+    const response = await fetch(`http://localhost:8080/realms/${this.realm}/protocol/openid-connect/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params
+    });
+
+    const data = await response.json();
+    this.accessToken = data.access_token;
+    this.refreshToken = data.refresh_token;
+    this.expiresAt = Date.now() + (data.expires_in * 1000);
+    return data;
+  }
+
+  getAccessToken() {
+    return `Bearer ${this.accessToken}`;
+  }
+
+  isExpired() {
+    return Date.now() >= this.expiresAt - 60000; // Refresh 1 minute before expiry
+  }
+}
+
+// Usage
+const tokenManager = new TokenManager('your-client-id', 'your-client-secret', 'your-realm');
+await tokenManager.login('username', 'password');
+
+// Auto-refresh interval
+setInterval(async () => {
+  if (tokenManager.isExpired()) {
+    await tokenManager.refresh();
+  }
+}, 30000);
+```

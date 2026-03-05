@@ -2,3 +2,24 @@
 title: "Подключение к STOMP"
 sidebarTitle: "Подключение к STOMP"
 ---
+
+### Подключиться к топику с аутентификацией по токену
+
+```javascript
+import { Client } from '@stomp/stompjs';
+
+const client = new Client({
+  brokerURL: 'ws://localhost:8080/ws',
+  connectHeaders: {
+    'passcode': 'your-auth-token-here',
+  },
+  onConnect: () => {
+    client.subscribe('/topic/your-topic', message => {
+      const data = JSON.parse(message.body);
+      console.log('Received message:', data);
+    });
+  }
+});
+
+client.activate();
+```
