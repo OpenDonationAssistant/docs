@@ -21,6 +21,6 @@
     ]
   },
   "api": {
-    "openapi": "/oda-actions-service-1.0.0.yml"
+    "openapi": "/api-reference/oda-actions-service-1.0.0.yml"
   }
 }
