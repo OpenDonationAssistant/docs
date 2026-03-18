@@ -9,7 +9,7 @@
     "tabs": [
       {
         "tab": "API Reference",
-        "openapi": "openapi.json"
+        "openapi": "oda-actions-service-1.0.0.yml"
       }
     ]
   }
