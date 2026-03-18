@@ -9,8 +9,18 @@
     "tabs": [
       {
         "tab": "API Reference",
-        "openapi": "oda-actions-service-1.0.0.yml"
+        "openapi": "api-reference/oda-actions-service-1.0.0.yml"
+      },
+      {
+        "tab": "Getting Started",
+        "pages": [
+          "auth",
+          "stomp-connect"
+        ]
       }
     ]
+  },
+  "api": {
+    "openapi": "/oda-actions-service-1.0.0.yml"
   }
 }
