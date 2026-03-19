@@ -44,7 +44,11 @@
     "default": "dark",
     "strict": true
   },
-  "logo": "/images/logo.svg",
+  "logo": {
+    "light": "/images/logo.svg",
+    "dark": "/images/logo.svg",
+    "href": "https://oda.digital/"
+  },
   "background": {
     "color": {
       "light": "#F7F7F8",
