@@ -1,0 +1,323 @@
+openapi: 3.0.1
+info:
+  title: oda-history-service
+  version: 1.0.0
+paths:
+  /history/commands/add-item:
+    post:
+      summary: Add a new history item
+      description: Creates a new donation history item for the authenticated user
+      operationId: addHistoryItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand"
+        required: true
+      responses:
+        "200":
+          description: Successfully created the history item
+  /history/get:
+    post:
+      summary: Get donation history
+      description: Retrieves paginated donation history for the authenticated user
+      operationId: getHistory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pageable:
+                  $ref: "#/components/schemas/Pageable"
+                command:
+                  $ref: "#/components/schemas/GetHistoryApi.GetHistoryCommand"
+        required: true
+      responses:
+        "200":
+          description: Successfully retrieved history items
+          content:
+            application/json: {}
+        "401":
+          description: Unauthorized - user not authenticated
+          content:
+            application/json: {}
+  /notification/donate.stream/{recipientId}/{token}:
+    post:
+      summary: Handle Donate.Stream webhook notifications
+      description: Receives donation notifications from Donate.Stream and creates
+        history items
+      operationId: addHistoryItem_1
+      parameters:
+      - name: recipientId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DonateStreamWebhook.DonateStreamWebhookBody"
+        required: true
+      responses:
+        "200":
+          description: Successfully processed the webhook
+          content:
+            text/plain: {}
+components:
+  schemas:
+    AddHistoryItemApi.AddHistoryItemCommand:
+      type: object
+      properties:
+        paymentId:
+          type: string
+          description: Payment ID from the source system
+          nullable: true
+        nickname:
+          type: string
+          description: Donor's nickname
+        recipientId:
+          type: string
+          description: Recipient ID (streamer/creator)
+        amount:
+          description: Donation amount
+          allOf:
+          - $ref: "#/components/schemas/Amount"
+        message:
+          type: string
+          description: Message from the donor
+        authorizationTimestamp:
+          type: string
+          description: Authorization timestamp
+          format: date-time
+        system:
+          type: string
+          description: Source system name
+        externalId:
+          type: string
+          description: External ID from the source system
+          nullable: true
+        attachments:
+          type: array
+          description: Attached media files
+          items:
+            $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.Attachment"
+        goals:
+          type: array
+          description: Target goals
+          items:
+            $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.TargetGoal"
+        reelResults:
+          type: array
+          description: Reel results from social media
+          items:
+            $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.ReelResult"
+        actions:
+          type: array
+          description: Action requests triggered by the donation
+          items:
+            $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.ActionRequest"
+        alertMedia:
+          description: Alert media URL
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.AlertMedia"
+        vote:
+          description: Vote information
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.Vote"
+        event:
+          type: string
+          description: Event type
+        triggerAlert:
+          type: boolean
+          description: Whether to trigger an alert
+        triggerReel:
+          type: boolean
+          description: Whether to trigger a reel
+        triggerDonaton:
+          type: boolean
+          description: Whether to trigger donation processing
+        addToGoal:
+          type: boolean
+          description: Whether to add to goal
+        addToTop:
+          type: boolean
+          description: Whether to add to top
+      description: Command to add a new history item
+    AddHistoryItemApi.AddHistoryItemCommand.ActionRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Action request ID
+        actionId:
+          type: string
+          description: Action ID
+        name:
+          type: string
+          description: Action name
+        amount:
+          type: integer
+          description: Amount required for the action
+          format: int32
+        payload:
+          type: object
+          additionalProperties:
+            type: object
+          description: Action payload data
+      description: Action request triggered by donation
+    AddHistoryItemApi.AddHistoryItemCommand.AlertMedia:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Alert media URL
+      description: Alert media
+    AddHistoryItemApi.AddHistoryItemCommand.Attachment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Attachment ID
+      description: Media attachment
+    AddHistoryItemApi.AddHistoryItemCommand.ReelResult:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the reel
+      description: Reel result from social media
+    AddHistoryItemApi.AddHistoryItemCommand.TargetGoal:
+      type: object
+      properties:
+        goalId:
+          type: string
+          description: Goal ID
+        goalTitle:
+          type: string
+          description: Goal title
+      description: Target goal
+    AddHistoryItemApi.AddHistoryItemCommand.Vote:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Vote ID
+          nullable: true
+        name:
+          type: string
+          description: Vote name
+        isNew:
+          type: boolean
+          description: Is this a new vote?
+      description: Vote information
+    Amount:
+      required:
+      - currency
+      - major
+      - minor
+      type: object
+      properties:
+        minor:
+          type: integer
+          format: int32
+        major:
+          type: integer
+          format: int32
+        currency:
+          type: string
+      description: Donation amount
+    DonateStreamWebhook.DonateStreamWebhookBody:
+      required:
+      - type
+      - uid
+      type: object
+      properties:
+        type:
+          type: string
+          description: "Event type (e.g., 'confirm', 'donation')"
+        uid:
+          type: string
+          description: Unique identifier from Donate.Stream
+        message:
+          type: string
+          description: Donation message from the donor
+        nickname:
+          type: string
+          description: Donor's nickname
+        sum:
+          type: string
+          description: "Donation amount as string (e.g., '100.00')"
+      description: Donate.Stream webhook payload
+    GetHistoryApi.GetHistoryCommand:
+      type: object
+      properties:
+        systems:
+          type: array
+          description: "List of system names to filter by (e.g., 'donate.stream',\
+            \ 'donatello')"
+          items:
+            type: string
+      description: Command to filter history by systems
+    Pageable:
+      required:
+      - size
+      - sort
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Sort"
+      - type: object
+        properties:
+          number:
+            type: integer
+            format: int32
+          size:
+            type: integer
+            format: int32
+          mode:
+            $ref: "#/components/schemas/Pageable.Mode"
+          sort:
+            $ref: "#/components/schemas/Sort"
+    Pageable.Mode:
+      type: string
+      enum:
+      - CURSOR_NEXT
+      - CURSOR_PREVIOUS
+      - OFFSET
+    Sort:
+      required:
+      - orderBy
+      type: object
+      properties:
+        orderBy:
+          type: array
+          items:
+            $ref: "#/components/schemas/Sort.Order"
+    Sort.Order:
+      required:
+      - direction
+      - ignoreCase
+      - property
+      type: object
+      properties:
+        ignoreCase:
+          type: boolean
+        direction:
+          $ref: "#/components/schemas/Sort.Order.Direction"
+        property:
+          type: string
+        ascending:
+          type: boolean
+    Sort.Order.Direction:
+      type: string
+      enum:
+      - ASC
+      - DESC
