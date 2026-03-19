@@ -20,12 +20,16 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "Actions",
-            "openapi": "api-reference/oda-actions-service-1.0.0.yml"
+            "group": "History",
+            "openapi": "api-reference/oda-history-service-1.0.0.yml"
           },
           {
             "group": "Actions",
             "openapi": "api-reference/oda-actions-service-1.0.0.yml"
+          },
+          {
+            "group": "Fonts",
+            "openapi": "api-reference/oda-font-service-1.0.0.yml"
           }
         ]
       }
