@@ -5,114 +5,145 @@ info:
 paths:
   /actions:
     get:
+      summary: Get actions
+      description: Retrieves actions filtered by recipientId and optional parameters
       operationId: getActions
       parameters:
       - name: recipientId
         in: query
+        description: Owner recipient ID
         required: true
         explode: false
         schema:
           type: string
       - name: game
         in: query
+        description: Filter by game
         explode: false
         schema:
           type: string
           nullable: true
       - name: enabled
         in: query
+        description: Filter by enabled status
         explode: false
         schema:
           type: boolean
           nullable: true
       - name: category
         in: query
+        description: Filter by category
         explode: false
         schema:
           type: string
           nullable: true
       - name: provider
         in: query
+        description: Filter by provider
         explode: false
         schema:
           type: string
           nullable: true
       responses:
         "200":
-          description: getActions 200 response
+          description: Actions retrieved successfully
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ActionController.ActionDto"
-  /actions/commands/addActions:
+                  $ref: "#/components/schemas/ActionControllerApi.ActionDto"
+  /actions/commands/add-actions:
     post:
       operationId: addAction
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AddAction.AddActionsCommand"
+              $ref: "#/components/schemas/AddActionApi.AddActionsCommand"
         required: true
       responses:
         "200":
-          description: Success
+          description: Actions successfully created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AddAction.AddActionResult"
+                $ref: "#/components/schemas/AddActionApi.AddActionResult"
   /actions/commands/deleteActions:
     post:
+      summary: Delete actions
+      description: "Deletes actions by their IDs, category, or provider"
       operationId: deleteActions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DeleteActions.DeleteActionsCommand"
+              $ref: "#/components/schemas/DeleteActionsApi.DeleteActionsCommand"
         required: true
       responses:
         "200":
-          description: deleteActions 200 response
+          description: Actions successfully deleted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DeleteActions.DeleteActionsResult"
+                $ref: "#/components/schemas/DeleteActionsApi.DeleteActionsResult"
   /actions/commands/disableActions:
     post:
+      summary: Disable actions
+      description: "Disables actions by their IDs, category, provider, or game"
       operationId: disableActions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DisableActions.DisableActionsCommand"
+              $ref: "#/components/schemas/DisableActionsApi.DisableActionsCommand"
         required: true
       responses:
         "200":
-          description: disableActions 200 response
+          description: Actions successfully disabled
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DisableActions.DisableActionsResult"
+                $ref: "#/components/schemas/DisableActionsApi.DisableActionsResult"
   /actions/commands/enableActions:
     post:
+      summary: Enable actions
+      description: "Enables actions by their IDs, category, provider, or game"
       operationId: enableActions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/EnableActions.EnableActionsCommand"
+              $ref: "#/components/schemas/EnableActionsApi.EnableActionsCommand"
         required: true
       responses:
         "200":
-          description: enableActions 200 response
+          description: Actions successfully enabled
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EnableActions.EnableActionsResult"
+                $ref: "#/components/schemas/EnableActionsApi.EnableActionsResult"
+  /actions/commands/linkActions:
+    post:
+      summary: Link actions
+      description: Links actions together for coordinated execution
+      operationId: linkActions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkActionsApi.LinkActionsRequest"
+        required: true
+      responses:
+        "200":
+          description: Actions successfully linked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkActionsApi.LinkActionsResponse"
 components:
   schemas:
-    ActionController.ActionDto:
+    ActionControllerApi.ActionDto:
       required:
       - category
       - enabled
@@ -139,7 +170,7 @@ components:
           type: object
           additionalProperties:
             type: object
-    AddAction.ActionParameter:
+    AddActionApi.ActionParameter:
       required:
       - displayName
       - name
@@ -152,7 +183,7 @@ components:
           type: string
         type:
           type: string
-    AddAction.AddActionResult:
+    AddActionApi.AddActionResult:
       required:
       - action
       - message
@@ -164,8 +195,8 @@ components:
         message:
           type: string
         action:
-          $ref: "#/components/schemas/ActionController.ActionDto"
-    AddAction.AddActionsCommand:
+          $ref: "#/components/schemas/ActionControllerApi.ActionDto"
+    AddActionApi.AddActionsCommand:
       required:
       - actions
       type: object
@@ -173,8 +204,8 @@ components:
         actions:
           type: array
           items:
-            $ref: "#/components/schemas/AddAction.NewAction"
-    AddAction.NewAction:
+            $ref: "#/components/schemas/AddActionApi.NewAction"
+    AddActionApi.NewAction:
       required:
       - category
       - game
@@ -199,7 +230,7 @@ components:
         parameters:
           type: array
           items:
-            $ref: "#/components/schemas/AddAction.ActionParameter"
+            $ref: "#/components/schemas/AddActionApi.ActionParameter"
     Amount:
       required:
       - currency
@@ -215,7 +246,7 @@ components:
           format: int32
         currency:
           type: string
-    DeleteActions.DeleteActionsCommand:
+    DeleteActionsApi.DeleteActionsCommand:
       type: object
       properties:
         category:
@@ -229,7 +260,7 @@ components:
           nullable: true
           items:
             type: string
-    DeleteActions.DeleteActionsResult:
+    DeleteActionsApi.DeleteActionsResult:
       required:
       - ids
       - message
@@ -244,39 +275,7 @@ components:
           type: array
           items:
             type: string
-    DisableActions.DisableActionsCommand:
-      type: object
-      properties:
-        category:
-          type: string
-          nullable: true
-        provider:
-          type: string
-          nullable: true
-        game:
-          type: string
-          nullable: true
-        ids:
-          type: array
-          nullable: true
-          items:
-            type: string
-    DisableActions.DisableActionsResult:
-      required:
-      - ids
-      - message
-      - success
-      type: object
-      properties:
-        success:
-          type: boolean
-        message:
-          type: string
-        ids:
-          type: array
-          items:
-            type: string
-    EnableActions.EnableActionsCommand:
+    DisableActionsApi.DisableActionsCommand:
       type: object
       properties:
         category:
@@ -293,7 +292,7 @@ components:
           nullable: true
           items:
             type: string
-    EnableActions.EnableActionsResult:
+    DisableActionsApi.DisableActionsResult:
       required:
       - ids
       - message
@@ -308,3 +307,68 @@ components:
           type: array
           items:
             type: string
+    EnableActionsApi.EnableActionsCommand:
+      type: object
+      properties:
+        category:
+          type: string
+          nullable: true
+        provider:
+          type: string
+          nullable: true
+        game:
+          type: string
+          nullable: true
+        ids:
+          type: array
+          nullable: true
+          items:
+            type: string
+    EnableActionsApi.EnableActionsResult:
+      required:
+      - ids
+      - message
+      - success
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
+    LinkActionsApi.ActionRequest:
+      required:
+      - actionId
+      - amount
+      type: object
+      properties:
+        actionId:
+          type: string
+        amount:
+          type: integer
+          format: int32
+    LinkActionsApi.LinkActionsRequest:
+      required:
+      - actions
+      - originId
+      - source
+      type: object
+      properties:
+        source:
+          type: string
+        originId:
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkActionsApi.ActionRequest"
+    LinkActionsApi.LinkActionsResponse:
+      type: object
+      properties:
+        amount:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/Amount"
