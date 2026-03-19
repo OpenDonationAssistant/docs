@@ -35,6 +35,14 @@
     "openapi": "/api-reference/oda-actions-service-1.0.0.yml"
   },
   "appearance": {
-    "default": "dark"
+    "default": "dark",
+    "strict": true
+  },
+  "logo": "/images/logo-square.png",
+  "background": {
+    "color": {
+      "light": "#F7F7F8",
+      "dark": "#050505"
+    }
   }
 }
