@@ -8,14 +8,28 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "API Reference",
-        "openapi": "api-reference/oda-actions-service-1.0.0.yml"
-      },
-      {
         "tab": "Getting Started",
         "pages": [
           "auth",
           "stomp-connect"
+        ]
+      },
+      {
+        "tab": "Actions API",
+        "openapi": "api-reference/oda-actions-service-1.0.0.yml"
+      },
+      {
+        "tab": "API Reference",
+        "dropdowns": [
+          {
+            "dropdown": "Service",
+            "tabs": [
+              {
+                "tab": "Actions",
+                "openapi": "api-reference/oda-actions-service-1.0.0.yml"
+              }
+            ]
+          }
         ]
       }
     ]
