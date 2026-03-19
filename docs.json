@@ -15,10 +15,6 @@
         ]
       },
       {
-        "tab": "Actions API",
-        "openapi": "api-reference/oda-actions-service-1.0.0.yml"
-      },
-      {
         "tab": "API Reference",
         "dropdowns": [
           {
@@ -27,6 +23,9 @@
               {
                 "tab": "Actions",
                 "openapi": "api-reference/oda-actions-service-1.0.0.yml"
+              },
+              {
+                "tab": "Payments"
               }
             ]
           }
