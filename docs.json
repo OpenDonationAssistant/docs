@@ -3,7 +3,9 @@
   "theme": "mint",
   "name": "Documentation",
   "colors": {
-    "primary": "#0D9373"
+    "primary": "#BEC8F8",
+    "dark": "#161618",
+    "light": "#A9A9B2"
   },
   "navigation": {
     "tabs": [
@@ -31,5 +33,8 @@
   },
   "api": {
     "openapi": "/api-reference/oda-actions-service-1.0.0.yml"
+  },
+  "appearance": {
+    "default": "dark"
   }
 }
