@@ -55,6 +55,8 @@ paths:
                   $ref: "#/components/schemas/ActionControllerApi.ActionDto"
   /actions/commands/add-actions:
     post:
+      summary: Add actions
+      description: Add new actions to the system
       operationId: addAction
       requestBody:
         content:
@@ -69,7 +71,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AddActionApi.AddActionResult"
-  /actions/commands/deleteActions:
+  /actions/commands/delete-actions:
     post:
       summary: Delete actions
       description: "Deletes actions by their IDs, category, or provider"
@@ -87,7 +89,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DeleteActionsApi.DeleteActionsResult"
-  /actions/commands/disableActions:
+  /actions/commands/disable-actions:
     post:
       summary: Disable actions
       description: "Disables actions by their IDs, category, provider, or game"
@@ -105,7 +107,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DisableActionsApi.DisableActionsResult"
-  /actions/commands/enableActions:
+  /actions/commands/enable-actions:
     post:
       summary: Enable actions
       description: "Enables actions by their IDs, category, provider, or game"
@@ -123,24 +125,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EnableActionsApi.EnableActionsResult"
-  /actions/commands/linkActions:
-    post:
-      summary: Link actions
-      description: Links actions together for coordinated execution
-      operationId: linkActions
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LinkActionsApi.LinkActionsRequest"
-        required: true
-      responses:
-        "200":
-          description: Actions successfully linked
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LinkActionsApi.LinkActionsResponse"
 components:
   schemas:
     ActionControllerApi.ActionDto:
@@ -339,36 +323,3 @@ components:
           type: array
           items:
             type: string
-    LinkActionsApi.ActionRequest:
-      required:
-      - actionId
-      - amount
-      type: object
-      properties:
-        actionId:
-          type: string
-        amount:
-          type: integer
-          format: int32
-    LinkActionsApi.LinkActionsRequest:
-      required:
-      - actions
-      - originId
-      - source
-      type: object
-      properties:
-        source:
-          type: string
-        originId:
-          type: string
-        actions:
-          type: array
-          items:
-            $ref: "#/components/schemas/LinkActionsApi.ActionRequest"
-    LinkActionsApi.LinkActionsResponse:
-      type: object
-      properties:
-        amount:
-          nullable: true
-          allOf:
-          - $ref: "#/components/schemas/Amount"
