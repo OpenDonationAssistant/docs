@@ -49,6 +49,7 @@
     "color": {
       "light": "#F7F7F8",
       "dark": "#050505"
-    }
+    },
+    "decoration": "gradient"
   }
 }
