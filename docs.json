@@ -3,7 +3,9 @@
   "theme": "mint",
   "name": "Documentation",
   "colors": {
-    "primary": "#0D9373"
+    "primary": "#BEC8F8",
+    "dark": "#161618",
+    "light": "#A9A9B2"
   },
   "navigation": {
     "tabs": [
@@ -33,5 +35,16 @@
     "openapi": "/api-reference/oda-actions-service-1.0.0.yml",
     "openapi": "/api-reference/oda-font-service-1.0.0.yml"
     "openapi": "/api-reference/oda-history-service-1.0.0.yml"
+  },
+  "appearance": {
+    "default": "dark",
+    "strict": true
+  },
+  "logo": "/images/logo-square.png",
+  "background": {
+    "color": {
+      "light": "#F7F7F8",
+      "dark": "#050505"
+    }
   }
 }
