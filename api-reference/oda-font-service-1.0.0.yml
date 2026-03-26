@@ -4,7 +4,7 @@ info:
   version: 1.0.0
 tags:
 - name: Fonts
-  description: Font management operations
+  description: Font management commands
 paths:
   /fonts:
     get:
@@ -51,13 +51,24 @@ paths:
       - BearerAuth: []
   /fonts/commands/refresh:
     post:
+      tags:
+      - Fonts
+      summary: Refresh fonts
+      description: Fetches the latest fonts from the Fontsource API and updates the
+        cache
       operationId: refresh
       responses:
         "200":
-          description: refresh 200 response
+          description: Fonts refreshed successfully
+      security:
+      - BearerAuth: []
   /fonts/commands/upload:
     put:
-      operationId: put
+      tags:
+      - Fonts
+      summary: Upload font
+      description: Uploads a TTF font file and stores it in the user's font collection
+      operationId: upload
       requestBody:
         content:
           multipart/form-data:
@@ -74,11 +85,15 @@ paths:
         required: true
       responses:
         "200":
-          description: put 200 response
+          description: Font uploaded successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/FontApi.FontDto"
+        "401":
+          description: Unauthorized - user not authenticated
+      security:
+      - BearerAuth: []
 components:
   schemas:
     FontApi.FontDto:
