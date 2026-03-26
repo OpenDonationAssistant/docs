@@ -1,0 +1,176 @@
+openapi: 3.0.1
+info:
+  title: ODA Automation Service
+  description: ODA Automation Service
+  contact:
+    name: stCarolas
+    email: stcarolas@gmail.com
+  license:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+  version: 1.0.0
+tags:
+- name: Automation
+  description: Automation operations for managing rules and variables
+- name: Automation Commands
+  description: Commands for updating automation state
+paths:
+  /automation/:
+    get:
+      tags:
+      - Automation
+      summary: Get automation state
+      description: Retrieves the complete automation state including all rules and
+        variables
+      operationId: getState
+      responses:
+        "200":
+          description: Complete automation state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutomationDto"
+        "401":
+          description: Unauthorized - user not authenticated
+  /automation/commands/setstate:
+    post:
+      tags:
+      - Automation Commands
+      summary: Set automation state
+      description: Updates automation variables and rules for the authenticated user
+      operationId: setState
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetState.SetStateCommand"
+        required: true
+      responses:
+        "200":
+          description: State successfully updated
+        "401":
+          description: Unauthorized - user not authenticated
+  /automation/rules:
+    get:
+      tags:
+      - Automation
+      summary: List automation rules
+      description: Retrieves all automation rules for the authenticated user
+      operationId: listAutomations
+      responses:
+        "200":
+          description: List of automation rules
+          content:
+            application/json:
+              schema:
+                allOf: []
+                anyOf: []
+                oneOf: []
+        "401":
+          description: Unauthorized - user not authenticated
+  /automation/variables:
+    get:
+      tags:
+      - Automation
+      summary: List automation variables
+      description: Retrieves all automation variables for the authenticated user
+      operationId: listVariables
+      responses:
+        "200":
+          description: List of automation variables
+          content:
+            application/json:
+              schema:
+                allOf: []
+                anyOf: []
+                oneOf: []
+        "401":
+          description: Unauthorized - user not authenticated
+components:
+  schemas:
+    AutomationActionDto:
+      required:
+      - id
+      - value
+      type: object
+      properties:
+        id:
+          type: string
+        value:
+          type: object
+          additionalProperties: true
+    AutomationDto:
+      required:
+      - rules
+      - variables
+      type: object
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationRuleDto"
+        variables:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationVariableDto"
+    AutomationRuleDto:
+      required:
+      - actions
+      - id
+      - name
+      - triggers
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        triggers:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationTriggerDto"
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationActionDto"
+    AutomationTriggerDto:
+      required:
+      - id
+      - value
+      type: object
+      properties:
+        id:
+          type: string
+        value:
+          type: object
+          additionalProperties: true
+    AutomationVariableDto:
+      required:
+      - id
+      - name
+      - type
+      - value
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+    SetState.SetStateCommand:
+      required:
+      - rules
+      - variables
+      type: object
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationRuleDto"
+        variables:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationVariableDto"
