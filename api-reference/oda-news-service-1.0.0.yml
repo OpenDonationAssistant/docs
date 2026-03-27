@@ -1,0 +1,230 @@
+openapi: 3.0.1
+info:
+  title: ODA News Service
+  description: News Service API
+  contact:
+    name: stCarolas
+    email: stcarolas@gmail.com
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 1.0.0
+paths:
+  /feed/commands/mark-as-read:
+    post:
+      operationId: markAsRead
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkAsRead.MarkAsReadCommand"
+        required: true
+      responses:
+        "200":
+          description: markAsRead 200 response
+  /feed/news:
+    get:
+      operationId: getFeed
+      responses:
+        "200":
+          description: getFeed 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NewsDto"
+  /news:
+    get:
+      operationId: getNews
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: getNews 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Page_NewsDto_"
+  /news/commands/create:
+    post:
+      operationId: addNews
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddNews.AddNewsCommand"
+        required: true
+      responses:
+        "200":
+          description: addNews 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsDto"
+  /news/{newsId}/feedback/commands/create:
+    post:
+      operationId: createFeedback
+      parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFeedbackCommand"
+        required: true
+      responses:
+        "200":
+          description: createFeedback 200 response
+components:
+  schemas:
+    AddNews.AddNewsCommand:
+      required:
+      - date
+      - description
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+        demoUrl:
+          type: string
+          nullable: true
+    CreateFeedbackCommand:
+      required:
+      - rating
+      type: object
+      properties:
+        rating:
+          type: integer
+          format: int32
+    MarkAsRead.MarkAsReadCommand:
+      required:
+      - newsId
+      type: object
+      properties:
+        newsId:
+          type: string
+    NewsDto:
+      required:
+      - date
+      - description
+      - id
+      - title
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+        demoUrl:
+          type: string
+          nullable: true
+    Page_NewsDto_:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Slice_NewsDto_"
+      - type: object
+        properties:
+          totalSize:
+            type: integer
+            format: int64
+          totalPages:
+            type: integer
+            format: int32
+    Pageable:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Sort"
+      - required:
+        - size
+        - sort
+        type: object
+        properties:
+          number:
+            type: integer
+            format: int32
+          size:
+            type: integer
+            format: int32
+          mode:
+            $ref: "#/components/schemas/Pageable.Mode"
+          sort:
+            $ref: "#/components/schemas/Sort"
+    Pageable.Mode:
+      type: string
+      enum:
+      - CURSOR_NEXT
+      - CURSOR_PREVIOUS
+      - OFFSET
+    Slice_NewsDto_:
+      required:
+      - content
+      - pageable
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/NewsDto"
+        pageable:
+          $ref: "#/components/schemas/Pageable"
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+    Sort:
+      required:
+      - orderBy
+      type: object
+      properties:
+        orderBy:
+          type: array
+          items:
+            $ref: "#/components/schemas/Sort.Order"
+    Sort.Order:
+      required:
+      - direction
+      - ignoreCase
+      - property
+      type: object
+      properties:
+        ignoreCase:
+          type: boolean
+        direction:
+          $ref: "#/components/schemas/Sort.Order.Direction"
+        property:
+          type: string
+        ascending:
+          type: boolean
+    Sort.Order.Direction:
+      type: string
+      enum:
+      - ASC
+      - DESC
