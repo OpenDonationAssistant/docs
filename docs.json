@@ -28,12 +28,20 @@
             "openapi": "api-reference/oda-actions-service-1.0.0.yml"
           },
           {
+            "group": "Automation",
+            "openapi": "api-reference/oda-automation-service-1.0.0.yml"
+          },
+          {
             "group": "Fonts",
             "openapi": "api-reference/oda-font-service-1.0.0.yml"
           },
           {
             "group": "Media",
             "openapi": "api-reference/oda-media-service-1.0.0.yml"
+          },
+          {
+            "group": "Widgets",
+            "openapi": "api-reference/oda-widgets-service-1.0.0.yml"
           }
         ]
       }
