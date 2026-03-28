@@ -1,104 +1,145 @@
-asyncapi: 3.0.0
+asyncapi: "2.6.0"
 info:
-  title: Subcsribed events queue
-  version: 1.0.0
-  description: AsyncAPI specification for ODA History Service events
-
+  title: Subscribed events queue
+  version: "1.0.0"
+  description: AMQP queue that receives events as JSON messages.
+# servers:
+  # production:
+    # url: amqp://broker.example.com
+    # protocol: amqp
+    # description: AMQP broker
 channels:
-  subscriptions.name:
-    address: subscriptions.name
-    description: Queue for receiving Events messages
-    messages:
-      HistoryItemEvent:
+  events:
+    description: Queue receiving various event messages
+    subscribe:
+      summary: Consume HistoryItemEvent messages from an AMQP queue
+      operationId: receiveHistoryItemEvent
+      bindings:
+        amqp:
+          is: queue
+          queue:
+            name: subscriptions.events
+            durable: true
+            autoDelete: false
+            exclusive: false
+            vhost: /
+      message:
+        $ref: '#/components/messages/HistoryItemEventMessage'
+components:
+  messages:
+    HistoryItemEventMessage:
+      name: HistoryItemEvent
+      title: HistoryItemEvent
+      summary: A JSON message representing a history item event
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/HistoryItemEvent'
+  schemas:
+    HistoryItemEvent:
+      type: object
+      required:
+        - id
+        - type
+        - recipientId
+        - system
+        - timestamp
+        - goals
+        - actions
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the event
+        type:
+          type: string
+          description: Event type
+        recipientId:
+          type: string
+          description: Recipient identifier (from HasRecipientId)
+        system:
+          type: string
+          description: System name or source
+        originId:
+          type: string
+          nullable: true
+          description: Optional origin identifier
+        timestamp:
+          type: string
+          format: date-time
+          description: Event timestamp in ISO-8601 (UTC recommended)
+        nickname:
+          type: string
+          nullable: true
+        amount:
+          $ref: '#/components/schemas/Amount'
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        goals:
+          type: array
+          items:
+            type: string
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionRequest'
+        vote:
+          $ref: '#/components/schemas/Vote'
+          nullable: true
+
+    ActionRequest:
+      type: object
+      required:
+        - id
+        - actionId
+        - name
+        - amount
+        - payload
+      properties:
+        id:
+          type: string
+        actionId:
+          type: string
+        name:
+          type: string
+        amount:
+          type: integer
+          nullable: true
+          description: Integer amount (nullable to match possible nulls)
         payload:
           type: object
-          properties:
-            id:
-              type: string
-              description: Unique identifier of the history item
-            type:
-              type: string
-              description: Type of the history event
-            recipientId:
-              type: string
-              description: ID of the recipient
-            system:
-              type: string
-              description: System that generated the event (e.g. ODA, DonationAlerts, DonateX and so on)
-            originId:
-              type: string
-              nullable: true
-              description: Original ID of the event in the origin system
-            timestamp:
-              type: string
-              format: date-time
-              description: Timestamp of the event
-            nickname:
-              type: string
-              nullable: true
-              description: Optional nickname of donater/message author
-            amount:
-              type: object
-              nullable: true
-              description: Amount details
-              properties:
-                major:
-                  type: integer
-                  description: Major amount value
-                minor:
-                  type: integer
-                  description: Minor amount value
-                currency:
-                  type: string
-                  description: Currency code
-            message:
-              type: string
-              nullable: true
-              description: Optional message by donater/viewer
-            goals:
-              type: array
-              items:
-                type: string
-              description: List of goal IDs
-            actions:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  actionId:
-                    type: string
-                  name:
-                    type: string
-                  amount:
-                    type: integer
-                  payload:
-                    type: object
-                    additionalProperties: true
-              description: List of action requests
-            vote:
-              type: object
-              nullable: true
-              properties:
-                id:
-                  type: string
-                  nullable: true
-                name:
-                  type: string
-                isNew:
-                  type: boolean
-              description: Vote information
-          required:
-            - id
-            - type
-            - recipientId
-            - system
-            - timestamp
-            - goals
-            - actions
-    bindings:
-      amqp:
-        is: queue
-        queue:
-          name: subscriptions.name
+          additionalProperties: true
+          description: Arbitrary key/value map (values can be any JSON type)
+
+    Vote:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        name:
+          type: string
+        isNew:
+          type: boolean
+
+    Amount:
+      type: object
+      nullable: true
+      description: Amount details
+      properties:
+        major:
+          type: integer
+          description: Major amount value
+        minor:
+          type: integer
+          description: Minor amount value
+        currency:
+          type: string
+          description: Currency code
+
+  securitySchemes:
+    none:
+      type: userPassword
+      description: Replace with appropriate security scheme if needed
+
+defaultContentType: application/json
