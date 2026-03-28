@@ -1,0 +1,104 @@
+asyncapi: 3.0.0
+info:
+  title: Subcsribed events queue
+  version: 1.0.0
+  description: AsyncAPI specification for ODA History Service events
+
+channels:
+  subscriptions.name:
+    address: subscriptions.name
+    description: Queue for receiving Events messages
+    messages:
+      HistoryItemEvent:
+        payload:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the history item
+            type:
+              type: string
+              description: Type of the history event
+            recipientId:
+              type: string
+              description: ID of the recipient
+            system:
+              type: string
+              description: System that generated the event (e.g. ODA, DonationAlerts, DonateX and so on)
+            originId:
+              type: string
+              nullable: true
+              description: Original ID of the event in the origin system
+            timestamp:
+              type: string
+              format: date-time
+              description: Timestamp of the event
+            nickname:
+              type: string
+              nullable: true
+              description: Optional nickname of donater/message author
+            amount:
+              type: object
+              nullable: true
+              description: Amount details
+              properties:
+                major:
+                  type: integer
+                  description: Major amount value
+                minor:
+                  type: integer
+                  description: Minor amount value
+                currency:
+                  type: string
+                  description: Currency code
+            message:
+              type: string
+              nullable: true
+              description: Optional message by donater/viewer
+            goals:
+              type: array
+              items:
+                type: string
+              description: List of goal IDs
+            actions:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  actionId:
+                    type: string
+                  name:
+                    type: string
+                  amount:
+                    type: integer
+                  payload:
+                    type: object
+                    additionalProperties: true
+              description: List of action requests
+            vote:
+              type: object
+              nullable: true
+              properties:
+                id:
+                  type: string
+                  nullable: true
+                name:
+                  type: string
+                isNew:
+                  type: boolean
+              description: Vote information
+          required:
+            - id
+            - type
+            - recipientId
+            - system
+            - timestamp
+            - goals
+            - actions
+    bindings:
+      amqp:
+        is: queue
+        queue:
+          name: subscriptions.name
