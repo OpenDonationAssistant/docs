@@ -41,7 +41,7 @@
           },
           {
             "group": "Widgets",
-            "openapi": "api-reference/oda-widgets-service-1.0.0.yml"
+            "openapi": "api-reference/oda-widget-service-1.0.0.yml"
           },
           {
             "group": "Subscriptions",
