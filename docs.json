@@ -32,6 +32,7 @@
             "openapi": "api-reference/oda-automation-service-1.0.0.yml"
           },
           {
+            "group": "Fonts",
             "openapi": "api-reference/oda-font-service-1.0.0.yml"
           },
           {
