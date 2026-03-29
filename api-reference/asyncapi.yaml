@@ -3,74 +3,72 @@ asyncapi: "3.1.0"
 info:
   title: Subscribed events queue
   version: "1.0.0"
-  description: AMQP queue that receives events as JSON messages.
 
 channels:
   events:
     description: Queue receiving various event messages
     messages:
-      $ref: '#/components/messages/HistoryItemEvent'
+      Event:
+        payload:
+          $ref: '#/components/messages/Event'
 
 components:
   messages:
-    HistoryItemEvent:
+
+    Event:
       payload:
-        $ref: '#/components/schemas/HistoryItemEvent'
+        description: "Event puslished when something is added to the history"
+        required:
+          - id
+          - type
+          - recipientId
+          - system
+          - timestamp
+          - goals
+          - actions
+        properties:
+          id:
+            type: string
+            description: Unique identifier for the event
+          type:
+            type: string
+            description: Event type
+          recipientId:
+            type: string
+            description: Recipient identifier (from HasRecipientId)
+          system:
+            type: string
+            description: System name or source
+          originId:
+            type: string
+            nullable: true
+            description: Optional origin identifier
+          timestamp:
+            type: string
+            format: date-time
+            description: Event timestamp in ISO-8601 (UTC recommended)
+          nickname:
+            type: string
+            nullable: true
+          amount:
+            $ref: '#/components/schemas/Amount'
+            nullable: true
+          message:
+            type: string
+            nullable: true
+          goals:
+            type: array
+            items:
+              type: string
+          actions:
+            type: array
+            items:
+              $ref: '#/components/schemas/ActionRequest'
+          vote:
+            $ref: '#/components/schemas/Vote'
+            nullable: true
 
   schemas:
-
-    HistoryItemEvent:
-      type: object
-      description: "Event puslished when something is added to the history"
-      required:
-        - id
-        - type
-        - recipientId
-        - system
-        - timestamp
-        - goals
-        - actions
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the event
-        type:
-          type: string
-          description: Event type
-        recipientId:
-          type: string
-          description: Recipient identifier (from HasRecipientId)
-        system:
-          type: string
-          description: System name or source
-        originId:
-          type: string
-          nullable: true
-          description: Optional origin identifier
-        timestamp:
-          type: string
-          format: date-time
-          description: Event timestamp in ISO-8601 (UTC recommended)
-        nickname:
-          type: string
-          nullable: true
-        amount:
-          $ref: '#/components/schemas/Amount'
-          nullable: true
-        message:
-          type: string
-          nullable: true
-        goals:
-          type: array
-          items:
-            type: string
-        actions:
-          type: array
-          items:
-            $ref: '#/components/schemas/ActionRequest'
-        vote:
-          $ref: '#/components/schemas/Vote'
-          nullable: true
 
     ActionRequest:
       type: object
