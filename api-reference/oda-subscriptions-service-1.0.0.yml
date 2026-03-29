@@ -3,6 +3,22 @@ info:
   title: oda-subscriptions-service
   version: 1.0.0
 paths:
+  /subscriptions:
+    get:
+      summary: Get all subscriptions for the authenticated recipient
+      description: Retrieves all subscriptions for the currently authenticated recipient
+      operationId: getSubscriptionsByRecipient
+      responses:
+        "200":
+          description: Subscriptions found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionData"
+        "401":
+          description: Unauthorized
+          content:
+            application/json: {}
   /subscriptions/commands/add-queue-subscription:
     post:
       summary: Subscribe to events
@@ -21,6 +37,50 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Void"
+  /subscriptions/commands/delete:
+    post:
+      summary: Delete subscription by ID
+      description: Deletes a subscription by its ID
+      operationId: deleteSubscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteSubscription.DeleteSubscriptionCommand"
+        required: true
+      responses:
+        "200":
+          description: Subscription successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
+        "404":
+          description: Subscription not found or not owned by user
+          content:
+            application/json: {}
+  /subscriptions/{id}:
+    get:
+      summary: Get subscription by ID
+      description: Retrieves a subscription by its ID
+      operationId: getSubscription
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Subscription found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionData"
+        "404":
+          description: Subscription not found
+          content:
+            application/json: {}
 components:
   schemas:
     AddSubscription.AddSubscriptionCommand:
@@ -28,6 +88,31 @@ components:
       - events
       type: object
       properties:
+        events:
+          type: array
+          items:
+            type: string
+    DeleteSubscription.DeleteSubscriptionCommand:
+      required:
+      - subscriptionId
+      type: object
+      properties:
+        subscriptionId:
+          type: string
+    SubscriptionData:
+      required:
+      - events
+      - id
+      - recipientId
+      - subscriberId
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        subscriberId:
+          type: string
         events:
           type: array
           items:
