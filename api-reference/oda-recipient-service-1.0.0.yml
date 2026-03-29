@@ -1,0 +1,696 @@
+openapi: 3.0.1
+info:
+  title: oda-recipient-service
+  version: 1.0.0
+paths:
+  /otp/create:
+    post:
+      operationId: createOtp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOtpCommand"
+        required: true
+      responses:
+        "200":
+          description: createOtp 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOtpCommandResponse"
+  /otp/exchange:
+    post:
+      operationId: exchangeOtp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExchangeOtpCommand"
+        required: true
+      responses:
+        "200":
+          description: exchangeOtp 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExchangeOtpCommandResponse"
+  /recipients/commands/changePassword:
+    post:
+      operationId: changePassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePassword.ChangePasswordCommand"
+        required: true
+      responses:
+        "200":
+          description: changePassword 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+  /recipients/commands/create-recipient:
+    post:
+      operationId: createRecipient
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRecipient.CreateRecipientCommand"
+        required: true
+      responses:
+        "200":
+          description: createRecipient 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateRecipient.CreateRecipientCommandResponse"
+  /recipients/commands/update-email:
+    post:
+      operationId: updateEmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEmail.UpdateEmailCommand"
+        required: true
+      responses:
+        "200":
+          description: updateEmail 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+  /recipients/tokens:
+    get:
+      operationId: listTokens
+      responses:
+        "200":
+          description: listTokens 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TokenController.TokenDto"
+  /recipients/tokens/deletetoken:
+    post:
+      operationId: deleteToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteToken.DeleteTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: deleteToken 200 response
+  /recipients/tokens/getdonationalertstoken:
+    post:
+      operationId: getDonationAlertsToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetDonationAlertsToken.GetDonationAlertsTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: getDonationAlertsToken 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+  /recipients/tokens/gettwitchtoken:
+    post:
+      operationId: getTwitchToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetTwitchToken.GetTwitchTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: getTwitchToken 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+  /recipients/tokens/getvklivetoken:
+    post:
+      operationId: getVKLiveToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetVKLiveToken.GetVKLiveTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: getVKLiveToken 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+  /recipients/tokens/settoken:
+    post:
+      operationId: setToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetToken.SetTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: setToken 200 response
+  /recipients/tokens/toggletoken:
+    post:
+      operationId: toggleToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ToggleToken.ToggleTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: toggleToken 200 response
+  /recipients/{recipientId}/donaters:
+    get:
+      operationId: list
+      parameters:
+      - name: recipientId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: period
+        in: query
+        required: true
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: list 200 response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/Amount"
+  /session:
+    get:
+      operationId: test
+      responses:
+        "200":
+          description: test 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Info"
+components:
+  schemas:
+    Amount:
+      required:
+      - currency
+      - major
+      - minor
+      type: object
+      properties:
+        minor:
+          type: integer
+          format: int32
+        major:
+          type: integer
+          format: int32
+        currency:
+          type: string
+    AttributeHolder:
+      required:
+      - attributes
+      type: object
+      properties:
+        attributes:
+          $ref: "#/components/schemas/ConvertibleValues_Object_"
+    ChangePassword.ChangePasswordCommand:
+      required:
+      - newPassword
+      - oldPassword
+      type: object
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+    ConversionService:
+      type: object
+    ConversionServiceProvider:
+      required:
+      - conversionService
+      type: object
+      properties:
+        conversionService:
+          $ref: "#/components/schemas/ConversionService"
+    ConvertibleMultiValues_String_:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConvertibleValues_List_String__"
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          empty:
+            type: boolean
+    ConvertibleValues_Cookie_:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          empty:
+            type: boolean
+          conversionService:
+            $ref: "#/components/schemas/ConversionService"
+    ConvertibleValues_List_String__:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          empty:
+            type: boolean
+          conversionService:
+            $ref: "#/components/schemas/ConversionService"
+    ConvertibleValues_Object_:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          empty:
+            type: boolean
+          conversionService:
+            $ref: "#/components/schemas/ConversionService"
+    Cookie:
+      required:
+      - name
+      - value
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        domain:
+          type: string
+          nullable: true
+        path:
+          type: string
+          nullable: true
+        httpOnly:
+          type: boolean
+        secure:
+          type: boolean
+        maxAge:
+          type: integer
+          format: int64
+        sameSite:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/SameSite"
+    Cookies:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConvertibleValues_Cookie_"
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          all:
+            type: array
+            items:
+              $ref: "#/components/schemas/Cookie"
+    CreateOtpCommand:
+      type: object
+    CreateOtpCommandResponse:
+      required:
+      - otp
+      type: object
+      properties:
+        otp:
+          type: string
+    CreateRecipient.CreateRecipientCommand:
+      required:
+      - nickname
+      type: object
+      properties:
+        nickname:
+          type: string
+        password:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+    CreateRecipient.CreateRecipientCommandResponse:
+      required:
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+    DeleteToken.DeleteTokenCommand:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+    ExchangeOtpCommand:
+      type: object
+    ExchangeOtpCommandResponse:
+      required:
+      - refreshToken
+      type: object
+      properties:
+        refreshToken:
+          type: string
+    GetDonationAlertsToken.GetDonationAlertsTokenCommand:
+      required:
+      - authorizationCode
+      type: object
+      properties:
+        authorizationCode:
+          type: string
+    GetTwitchToken.GetTwitchTokenCommand:
+      required:
+      - authorizationCode
+      type: object
+      properties:
+        authorizationCode:
+          type: string
+    GetVKLiveToken.GetVKLiveTokenCommand:
+      required:
+      - authorizationCode
+      type: object
+      properties:
+        authorizationCode:
+          type: string
+    Headers:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConvertibleMultiValues_String_"
+      - $ref: "#/components/schemas/ConvertibleValues_List_String__"
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+    HttpHeaders:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Headers"
+      - $ref: "#/components/schemas/ConvertibleMultiValues_String_"
+      - $ref: "#/components/schemas/ConvertibleValues_List_String__"
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          conversionService:
+            $ref: "#/components/schemas/ConversionService"
+          empty:
+            type: boolean
+          keepAlive:
+            type: boolean
+          origin:
+            type: string
+            nullable: true
+          authorization:
+            type: string
+            nullable: true
+          contentType:
+            type: string
+            nullable: true
+    HttpMessage_Void_:
+      required:
+      - attributes
+      - body
+      - characterEncoding
+      - contentType
+      - headers
+      - locale
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          headers:
+            $ref: "#/components/schemas/HttpHeaders"
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          body:
+            $ref: "#/components/schemas/Void"
+          bodyWriter:
+            nullable: true
+            allOf:
+            - $ref: "#/components/schemas/MessageBodyWriter_Void_"
+          characterEncoding:
+            type: string
+          locale:
+            type: string
+          contentLength:
+            type: integer
+            format: int64
+          contentType:
+            $ref: "#/components/schemas/MediaType"
+    HttpResponse_Void_:
+      required:
+      - attributes
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/HttpMessage_Void_"
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          status:
+            $ref: "#/components/schemas/HttpStatus"
+          cookies:
+            $ref: "#/components/schemas/Cookies"
+    HttpStatus:
+      type: string
+      enum:
+      - CONTINUE
+      - SWITCHING_PROTOCOLS
+      - PROCESSING
+      - EARLY_HINTS
+      - OK
+      - CREATED
+      - ACCEPTED
+      - NON_AUTHORITATIVE_INFORMATION
+      - NO_CONTENT
+      - RESET_CONTENT
+      - PARTIAL_CONTENT
+      - MULTI_STATUS
+      - ALREADY_IMPORTED
+      - IM_USED
+      - MULTIPLE_CHOICES
+      - MOVED_PERMANENTLY
+      - FOUND
+      - SEE_OTHER
+      - NOT_MODIFIED
+      - USE_PROXY
+      - SWITCH_PROXY
+      - TEMPORARY_REDIRECT
+      - PERMANENT_REDIRECT
+      - BAD_REQUEST
+      - UNAUTHORIZED
+      - PAYMENT_REQUIRED
+      - FORBIDDEN
+      - NOT_FOUND
+      - METHOD_NOT_ALLOWED
+      - NOT_ACCEPTABLE
+      - PROXY_AUTHENTICATION_REQUIRED
+      - REQUEST_TIMEOUT
+      - CONFLICT
+      - GONE
+      - LENGTH_REQUIRED
+      - PRECONDITION_FAILED
+      - REQUEST_ENTITY_TOO_LARGE
+      - REQUEST_URI_TOO_LONG
+      - UNSUPPORTED_MEDIA_TYPE
+      - REQUESTED_RANGE_NOT_SATISFIABLE
+      - EXPECTATION_FAILED
+      - I_AM_A_TEAPOT
+      - ENHANCE_YOUR_CALM
+      - MISDIRECTED_REQUEST
+      - UNPROCESSABLE_ENTITY
+      - LOCKED
+      - FAILED_DEPENDENCY
+      - TOO_EARLY
+      - UPGRADE_REQUIRED
+      - PRECONDITION_REQUIRED
+      - TOO_MANY_REQUESTS
+      - REQUEST_HEADER_FIELDS_TOO_LARGE
+      - NO_RESPONSE
+      - BLOCKED_BY_WINDOWS_PARENTAL_CONTROLS
+      - UNAVAILABLE_FOR_LEGAL_REASONS
+      - REQUEST_HEADER_TOO_LARGE
+      - INTERNAL_SERVER_ERROR
+      - NOT_IMPLEMENTED
+      - BAD_GATEWAY
+      - SERVICE_UNAVAILABLE
+      - GATEWAY_TIMEOUT
+      - HTTP_VERSION_NOT_SUPPORTED
+      - VARIANT_ALSO_NEGOTIATES
+      - INSUFFICIENT_STORAGE
+      - LOOP_DETECTED
+      - BANDWIDTH_LIMIT_EXCEEDED
+      - NOT_EXTENDED
+      - NETWORK_AUTHENTICATION_REQUIRED
+      - CONNECTION_TIMED_OUT
+    Info:
+      required:
+      - id
+      - logged
+      type: object
+      properties:
+        logged:
+          type: boolean
+        id:
+          type: string
+    MediaType:
+      required:
+      - name
+      - parametersMap
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        subtype:
+          type: string
+        extension:
+          type: string
+        parameters:
+          $ref: "#/components/schemas/OptionalValues_String_"
+        parametersMap:
+          type: object
+          additionalProperties:
+            type: string
+        quality:
+          type: string
+        qualityAsNumber:
+          type: number
+        version:
+          type: string
+        charset:
+          type: string
+          nullable: true
+        textBased:
+          type: boolean
+    MessageBodyWriter_Void_:
+      type: object
+      properties:
+        blocking:
+          type: boolean
+    MutableAttributeHolder:
+      required:
+      - attributes
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+    MutableConvertibleValues_Object_:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConvertibleValues_Object_"
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          conversionService:
+            $ref: "#/components/schemas/ConversionService"
+    OptionalValues_String_:
+      type: object
+      properties:
+        empty:
+          type: boolean
+    SameSite:
+      type: string
+      enum:
+      - Lax
+      - Strict
+      - None
+      x-enum-varnames:
+      - Lax
+      - Strict
+      - None
+    SetToken.SetTokenCommand:
+      required:
+      - id
+      - settings
+      - system
+      - token
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+        token:
+          type: string
+        type:
+          type: string
+        system:
+          type: string
+        settings:
+          type: object
+          additionalProperties:
+            type: object
+    ToggleToken.ToggleTokenCommand:
+      required:
+      - enabled
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+        enabled:
+          type: boolean
+    TokenController.TokenDto:
+      required:
+      - enabled
+      - id
+      - settings
+      - system
+      - token
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+        system:
+          type: string
+        type:
+          type: string
+        token:
+          type: string
+        enabled:
+          type: boolean
+        settings:
+          type: object
+          additionalProperties:
+            type: object
+    UpdateEmail.UpdateEmailCommand:
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+    Void:
+      type: object
