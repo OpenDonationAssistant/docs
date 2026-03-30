@@ -3,7 +3,7 @@ info:
   title: oda-max-service
   version: 1.0.0
 paths:
-  /:
+  /max/commands/generate-link:
     post:
       operationId: generateLink
       responses:
