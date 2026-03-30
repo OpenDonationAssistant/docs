@@ -1,0 +1,373 @@
+openapi: 3.0.1
+info:
+  title: oda-max-service
+  version: 1.0.0
+paths:
+  /notification/max:
+    post:
+      operationId: webhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Webhook.WebhookPayload"
+        required: true
+      responses:
+        "200":
+          description: webhook 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+components:
+  schemas:
+    AttributeHolder:
+      required:
+      - attributes
+      type: object
+      properties:
+        attributes:
+          $ref: "#/components/schemas/ConvertibleValues_Object_"
+    ConversionService:
+      type: object
+    ConversionServiceProvider:
+      required:
+      - conversionService
+      type: object
+      properties:
+        conversionService:
+          $ref: "#/components/schemas/ConversionService"
+    ConvertibleMultiValues_String_:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConvertibleValues_List_String__"
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          empty:
+            type: boolean
+    ConvertibleValues_Cookie_:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          empty:
+            type: boolean
+          conversionService:
+            $ref: "#/components/schemas/ConversionService"
+    ConvertibleValues_List_String__:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          empty:
+            type: boolean
+          conversionService:
+            $ref: "#/components/schemas/ConversionService"
+    ConvertibleValues_Object_:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          empty:
+            type: boolean
+          conversionService:
+            $ref: "#/components/schemas/ConversionService"
+    Cookie:
+      required:
+      - name
+      - value
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        domain:
+          type: string
+          nullable: true
+        path:
+          type: string
+          nullable: true
+        httpOnly:
+          type: boolean
+        secure:
+          type: boolean
+        maxAge:
+          type: integer
+          format: int64
+        sameSite:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/SameSite"
+    Cookies:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConvertibleValues_Cookie_"
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          all:
+            type: array
+            items:
+              $ref: "#/components/schemas/Cookie"
+    Headers:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConvertibleMultiValues_String_"
+      - $ref: "#/components/schemas/ConvertibleValues_List_String__"
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+    HttpHeaders:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Headers"
+      - $ref: "#/components/schemas/ConvertibleMultiValues_String_"
+      - $ref: "#/components/schemas/ConvertibleValues_List_String__"
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          conversionService:
+            $ref: "#/components/schemas/ConversionService"
+          empty:
+            type: boolean
+          keepAlive:
+            type: boolean
+          origin:
+            type: string
+            nullable: true
+          authorization:
+            type: string
+            nullable: true
+          contentType:
+            type: string
+            nullable: true
+    HttpMessage_Void_:
+      required:
+      - attributes
+      - body
+      - characterEncoding
+      - contentType
+      - headers
+      - locale
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          headers:
+            $ref: "#/components/schemas/HttpHeaders"
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          body:
+            $ref: "#/components/schemas/Void"
+          bodyWriter:
+            nullable: true
+            allOf:
+            - $ref: "#/components/schemas/MessageBodyWriter_Void_"
+          characterEncoding:
+            type: string
+          locale:
+            type: string
+          contentLength:
+            type: integer
+            format: int64
+          contentType:
+            $ref: "#/components/schemas/MediaType"
+    HttpResponse_Void_:
+      required:
+      - attributes
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/HttpMessage_Void_"
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          status:
+            $ref: "#/components/schemas/HttpStatus"
+          cookies:
+            $ref: "#/components/schemas/Cookies"
+    HttpStatus:
+      type: string
+      enum:
+      - CONTINUE
+      - SWITCHING_PROTOCOLS
+      - PROCESSING
+      - EARLY_HINTS
+      - OK
+      - CREATED
+      - ACCEPTED
+      - NON_AUTHORITATIVE_INFORMATION
+      - NO_CONTENT
+      - RESET_CONTENT
+      - PARTIAL_CONTENT
+      - MULTI_STATUS
+      - ALREADY_IMPORTED
+      - IM_USED
+      - MULTIPLE_CHOICES
+      - MOVED_PERMANENTLY
+      - FOUND
+      - SEE_OTHER
+      - NOT_MODIFIED
+      - USE_PROXY
+      - SWITCH_PROXY
+      - TEMPORARY_REDIRECT
+      - PERMANENT_REDIRECT
+      - BAD_REQUEST
+      - UNAUTHORIZED
+      - PAYMENT_REQUIRED
+      - FORBIDDEN
+      - NOT_FOUND
+      - METHOD_NOT_ALLOWED
+      - NOT_ACCEPTABLE
+      - PROXY_AUTHENTICATION_REQUIRED
+      - REQUEST_TIMEOUT
+      - CONFLICT
+      - GONE
+      - LENGTH_REQUIRED
+      - PRECONDITION_FAILED
+      - REQUEST_ENTITY_TOO_LARGE
+      - REQUEST_URI_TOO_LONG
+      - UNSUPPORTED_MEDIA_TYPE
+      - REQUESTED_RANGE_NOT_SATISFIABLE
+      - EXPECTATION_FAILED
+      - I_AM_A_TEAPOT
+      - ENHANCE_YOUR_CALM
+      - MISDIRECTED_REQUEST
+      - UNPROCESSABLE_ENTITY
+      - LOCKED
+      - FAILED_DEPENDENCY
+      - TOO_EARLY
+      - UPGRADE_REQUIRED
+      - PRECONDITION_REQUIRED
+      - TOO_MANY_REQUESTS
+      - REQUEST_HEADER_FIELDS_TOO_LARGE
+      - NO_RESPONSE
+      - BLOCKED_BY_WINDOWS_PARENTAL_CONTROLS
+      - UNAVAILABLE_FOR_LEGAL_REASONS
+      - REQUEST_HEADER_TOO_LARGE
+      - INTERNAL_SERVER_ERROR
+      - NOT_IMPLEMENTED
+      - BAD_GATEWAY
+      - SERVICE_UNAVAILABLE
+      - GATEWAY_TIMEOUT
+      - HTTP_VERSION_NOT_SUPPORTED
+      - VARIANT_ALSO_NEGOTIATES
+      - INSUFFICIENT_STORAGE
+      - LOOP_DETECTED
+      - BANDWIDTH_LIMIT_EXCEEDED
+      - NOT_EXTENDED
+      - NETWORK_AUTHENTICATION_REQUIRED
+      - CONNECTION_TIMED_OUT
+    MediaType:
+      required:
+      - name
+      - parametersMap
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        subtype:
+          type: string
+        extension:
+          type: string
+        parameters:
+          $ref: "#/components/schemas/OptionalValues_String_"
+        parametersMap:
+          type: object
+          additionalProperties:
+            type: string
+        quality:
+          type: string
+        qualityAsNumber:
+          type: number
+        version:
+          type: string
+        charset:
+          type: string
+          nullable: true
+        textBased:
+          type: boolean
+    Message:
+      required:
+      - body
+      type: object
+      properties:
+        body:
+          $ref: "#/components/schemas/Message.MessageBody"
+    Message.MessageBody:
+      required:
+      - mid
+      - seq
+      - text
+      type: object
+      properties:
+        mid:
+          type: string
+        seq:
+          type: integer
+          format: int32
+        text:
+          type: string
+    MessageBodyWriter_Void_:
+      type: object
+      properties:
+        blocking:
+          type: boolean
+    MutableAttributeHolder:
+      required:
+      - attributes
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+    MutableConvertibleValues_Object_:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/ConvertibleValues_Object_"
+      - $ref: "#/components/schemas/ConversionServiceProvider"
+      - type: object
+        properties:
+          conversionService:
+            $ref: "#/components/schemas/ConversionService"
+    OptionalValues_String_:
+      type: object
+      properties:
+        empty:
+          type: boolean
+    SameSite:
+      type: string
+      enum:
+      - Lax
+      - Strict
+      - None
+      x-enum-varnames:
+      - Lax
+      - Strict
+      - None
+    Void:
+      type: object
+    Webhook.WebhookPayload:
+      required:
+      - message
+      - timestamp
+      - update_type
+      type: object
+      properties:
+        update_type:
+          type: string
+        timestamp:
+          type: string
+        message:
+          $ref: "#/components/schemas/Message"
