@@ -3,6 +3,16 @@ info:
   title: oda-max-service
   version: 1.0.0
 paths:
+  /:
+    post:
+      operationId: generateLink
+      responses:
+        "200":
+          description: generateLink 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_GenerateLink.TemporaryLink_"
   /notification/max:
     post:
       operationId: webhook
@@ -114,6 +124,13 @@ components:
             type: array
             items:
               $ref: "#/components/schemas/Cookie"
+    GenerateLink.TemporaryLink:
+      required:
+      - link
+      type: object
+      properties:
+        link:
+          type: string
     Headers:
       type: object
       allOf:
@@ -144,6 +161,39 @@ components:
           contentType:
             type: string
             nullable: true
+    HttpMessage_GenerateLink.TemporaryLink_:
+      required:
+      - attributes
+      - body
+      - characterEncoding
+      - contentType
+      - headers
+      - locale
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          headers:
+            $ref: "#/components/schemas/HttpHeaders"
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          body:
+            $ref: "#/components/schemas/GenerateLink.TemporaryLink"
+          bodyWriter:
+            nullable: true
+            allOf:
+            - $ref: "#/components/schemas/MessageBodyWriter_GenerateLink.TemporaryLink_"
+          characterEncoding:
+            type: string
+          locale:
+            type: string
+          contentLength:
+            type: integer
+            format: int64
+          contentType:
+            $ref: "#/components/schemas/MediaType"
     HttpMessage_Void_:
       required:
       - attributes
@@ -177,6 +227,22 @@ components:
             format: int64
           contentType:
             $ref: "#/components/schemas/MediaType"
+    HttpResponse_GenerateLink.TemporaryLink_:
+      required:
+      - attributes
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/HttpMessage_GenerateLink.TemporaryLink_"
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          status:
+            $ref: "#/components/schemas/HttpStatus"
+          cookies:
+            $ref: "#/components/schemas/Cookies"
     HttpResponse_Void_:
       required:
       - attributes
@@ -317,6 +383,11 @@ components:
           format: int32
         text:
           type: string
+    MessageBodyWriter_GenerateLink.TemporaryLink_:
+      type: object
+      properties:
+        blocking:
+          type: boolean
     MessageBodyWriter_Void_:
       type: object
       properties:
@@ -356,6 +427,14 @@ components:
       - Lax
       - Strict
       - None
+    User:
+      required:
+      - userId
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int32
     Void:
       type: object
     Webhook.WebhookPayload:
@@ -371,3 +450,10 @@ components:
           type: string
         message:
           $ref: "#/components/schemas/Message"
+        user:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/User"
+        payload:
+          type: string
+          nullable: true
