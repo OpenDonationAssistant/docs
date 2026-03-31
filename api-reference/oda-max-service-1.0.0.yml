@@ -3,6 +3,34 @@ info:
   title: oda-max-service
   version: 1.0.0
 paths:
+  /max/announcers:
+    get:
+      operationId: announcers
+      responses:
+        "200":
+          description: announcers 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AnnouncerData"
+  /max/commands/add-announcer:
+    post:
+      operationId: addAnnouncer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddAnnouncer.AddAnnouncerRequest"
+        required: true
+      responses:
+        "200":
+          description: addAnnouncer 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
   /max/commands/generate-link:
     post:
       operationId: generateLink
@@ -13,6 +41,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HttpResponse_GenerateLink.TemporaryLink_"
+  /max/commands/list-available-chats:
+    post:
+      operationId: listAvailableChats
+      responses:
+        "200":
+          description: listAvailableChats 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+  /max/commands/toggle-announcer:
+    post:
+      operationId: disableAnnouncer
+      responses:
+        "200":
+          description: disableAnnouncer 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
   /notification/max:
     post:
       operationId: webhook
@@ -31,6 +79,67 @@ paths:
                 $ref: "#/components/schemas/HttpResponse_Void_"
 components:
   schemas:
+    AddAnnouncer.AddAnnouncerRequest:
+      required:
+      - buttons
+      - chatId
+      - text
+      type: object
+      properties:
+        text:
+          type: string
+        chatId:
+          type: integer
+          format: int32
+        buttons:
+          type: array
+          items:
+            $ref: "#/components/schemas/AddAnnouncer.Button"
+    AddAnnouncer.Button:
+      required:
+      - text
+      - url
+      type: object
+      properties:
+        text:
+          type: string
+        url:
+          type: string
+    AnnouncerData:
+      required:
+      - buttons
+      - chatId
+      - enabled
+      - id
+      - recipientId
+      - text
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        chatId:
+          type: integer
+          format: int32
+        text:
+          type: string
+        buttons:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnnouncerData.Button"
+        enabled:
+          type: boolean
+    AnnouncerData.Button:
+      required:
+      - text
+      - url
+      type: object
+      properties:
+        text:
+          type: string
+        url:
+          type: string
     AttributeHolder:
       required:
       - attributes
@@ -454,6 +563,10 @@ components:
           nullable: true
           allOf:
           - $ref: "#/components/schemas/User"
+        chatId:
+          type: integer
+          format: int32
+          nullable: true
         payload:
           type: string
           nullable: true
