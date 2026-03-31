@@ -624,10 +624,10 @@ components:
       - None
     User:
       required:
-      - userId
+      - user_id
       type: object
       properties:
-        userId:
+        user_id:
           type: integer
           format: int32
     Void:
