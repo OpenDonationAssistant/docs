@@ -50,7 +50,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HttpResponse_Void_"
+                $ref: "#/components/schemas/HttpResponse_List_ListAvailableChats.ChatDto__"
   /max/commands/toggle-announcer:
     post:
       operationId: disableAnnouncer
@@ -303,6 +303,41 @@ components:
             format: int64
           contentType:
             $ref: "#/components/schemas/MediaType"
+    HttpMessage_List_ListAvailableChats.ChatDto__:
+      required:
+      - attributes
+      - body
+      - characterEncoding
+      - contentType
+      - headers
+      - locale
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          headers:
+            $ref: "#/components/schemas/HttpHeaders"
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          body:
+            type: array
+            items:
+              $ref: "#/components/schemas/ListAvailableChats.ChatDto"
+          bodyWriter:
+            nullable: true
+            allOf:
+            - $ref: "#/components/schemas/MessageBodyWriter_List_ListAvailableChats.ChatDto__"
+          characterEncoding:
+            type: string
+          locale:
+            type: string
+          contentLength:
+            type: integer
+            format: int64
+          contentType:
+            $ref: "#/components/schemas/MediaType"
     HttpMessage_Void_:
       required:
       - attributes
@@ -342,6 +377,22 @@ components:
       type: object
       allOf:
       - $ref: "#/components/schemas/HttpMessage_GenerateLink.TemporaryLink_"
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          status:
+            $ref: "#/components/schemas/HttpStatus"
+          cookies:
+            $ref: "#/components/schemas/Cookies"
+    HttpResponse_List_ListAvailableChats.ChatDto__:
+      required:
+      - attributes
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/HttpMessage_List_ListAvailableChats.ChatDto__"
       - $ref: "#/components/schemas/MutableAttributeHolder"
       - $ref: "#/components/schemas/AttributeHolder"
       - type: object
@@ -440,6 +491,17 @@ components:
       - NOT_EXTENDED
       - NETWORK_AUTHENTICATION_REQUIRED
       - CONNECTION_TIMED_OUT
+    ListAvailableChats.ChatDto:
+      required:
+      - id
+      - title
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
     MediaType:
       required:
       - name
@@ -493,6 +555,11 @@ components:
         text:
           type: string
     MessageBodyWriter_GenerateLink.TemporaryLink_:
+      type: object
+      properties:
+        blocking:
+          type: boolean
+    MessageBodyWriter_List_ListAvailableChats.ChatDto__:
       type: object
       properties:
         blocking:
