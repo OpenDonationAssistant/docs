@@ -630,7 +630,7 @@ components:
           nullable: true
           allOf:
           - $ref: "#/components/schemas/User"
-        chatId:
+        chat_id:
           type: integer
           format: int32
           nullable: true
