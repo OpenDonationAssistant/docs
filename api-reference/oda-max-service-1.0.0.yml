@@ -5,10 +5,10 @@ info:
 paths:
   /max/accounts:
     get:
-      operationId: chats
+      operationId: accounts
       responses:
         "200":
-          description: chats 200 response
+          description: accounts 200 response
           content:
             application/json:
               schema:
