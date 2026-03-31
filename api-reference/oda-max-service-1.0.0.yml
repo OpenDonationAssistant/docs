@@ -471,7 +471,8 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
+          format: int32
     MediaType:
       required:
       - name
