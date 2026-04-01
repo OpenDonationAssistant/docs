@@ -26,12 +26,12 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                pageable:
-                  $ref: "#/components/schemas/Pageable"
-                command:
-                  $ref: "#/components/schemas/GetHistoryApi.GetHistoryCommand"
+              allOf:
+              - $ref: "#/components/schemas/GetHistoryApi.GetHistoryCommand"
+              - type: object
+                properties:
+                  pageable:
+                    $ref: "#/components/schemas/Pageable"
         required: true
       responses:
         "200":
@@ -42,34 +42,6 @@ paths:
           description: Unauthorized - user not authenticated
           content:
             application/json: {}
-  /notification/donate.stream/{recipientId}/{token}:
-    post:
-      summary: Handle Donate.Stream webhook notifications
-      description: Receives donation notifications from Donate.Stream and creates
-        history items
-      operationId: addHistoryItem_1
-      parameters:
-      - name: recipientId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: token
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/DonateStreamWebhook.DonateStreamWebhookBody"
-        required: true
-      responses:
-        "200":
-          description: Successfully processed the webhook
-          content:
-            text/plain: {}
 components:
   schemas:
     AddHistoryItemApi.AddHistoryItemCommand:
@@ -235,28 +207,6 @@ components:
         currency:
           type: string
       description: Donation amount
-    DonateStreamWebhook.DonateStreamWebhookBody:
-      required:
-      - type
-      - uid
-      type: object
-      properties:
-        type:
-          type: string
-          description: "Event type (e.g., 'confirm', 'donation')"
-        uid:
-          type: string
-          description: Unique identifier from Donate.Stream
-        message:
-          type: string
-          description: Donation message from the donor
-        nickname:
-          type: string
-          description: Donor's nickname
-        sum:
-          type: string
-          description: "Donation amount as string (e.g., '100.00')"
-      description: Donate.Stream webhook payload
     GetHistoryApi.GetHistoryCommand:
       type: object
       properties:
