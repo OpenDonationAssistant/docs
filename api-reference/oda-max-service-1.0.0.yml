@@ -8,7 +8,7 @@ paths:
       operationId: accounts
       responses:
         "200":
-          description: accounts 200 response
+          description: OK
           content:
             application/json:
               schema:
@@ -20,7 +20,7 @@ paths:
       operationId: announcers
       responses:
         "200":
-          description: announcers 200 response
+          description: OK
           content:
             application/json:
               schema:
@@ -38,7 +38,17 @@ paths:
         required: true
       responses:
         "200":
-          description: addAnnouncer 200 response
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+  /max/commands/delete-account:
+    post:
+      operationId: deleteAccount
+      responses:
+        "200":
+          description: OK
           content:
             application/json:
               schema:
@@ -58,33 +68,19 @@ paths:
       operationId: listAvailableChats
       responses:
         "200":
-          description: listAvailableChats 200 response
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HttpResponse_List_ListAvailableChats.ChatDto__"
+                type: array
+                items:
+                  $ref: "#/components/schemas/ListAvailableChats.ChatDto"
   /max/commands/toggle-announcer:
     post:
       operationId: disableAnnouncer
       responses:
         "200":
-          description: disableAnnouncer 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HttpResponse_Void_"
-  /notification/max:
-    post:
-      operationId: webhook
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Webhook.WebhookPayload"
-        required: true
-      responses:
-        "200":
-          description: webhook 200 response
+          description: OK
           content:
             application/json:
               schema:
@@ -282,41 +278,6 @@ components:
           contentType:
             type: string
             nullable: true
-    HttpMessage_List_ListAvailableChats.ChatDto__:
-      required:
-      - attributes
-      - body
-      - characterEncoding
-      - contentType
-      - headers
-      - locale
-      type: object
-      allOf:
-      - $ref: "#/components/schemas/MutableAttributeHolder"
-      - $ref: "#/components/schemas/AttributeHolder"
-      - type: object
-        properties:
-          headers:
-            $ref: "#/components/schemas/HttpHeaders"
-          attributes:
-            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
-          body:
-            type: array
-            items:
-              $ref: "#/components/schemas/ListAvailableChats.ChatDto"
-          bodyWriter:
-            nullable: true
-            allOf:
-            - $ref: "#/components/schemas/MessageBodyWriter_List_ListAvailableChats.ChatDto__"
-          characterEncoding:
-            type: string
-          locale:
-            type: string
-          contentLength:
-            type: integer
-            format: int64
-          contentType:
-            $ref: "#/components/schemas/MediaType"
     HttpMessage_Void_:
       required:
       - attributes
@@ -350,22 +311,6 @@ components:
             format: int64
           contentType:
             $ref: "#/components/schemas/MediaType"
-    HttpResponse_List_ListAvailableChats.ChatDto__:
-      required:
-      - attributes
-      type: object
-      allOf:
-      - $ref: "#/components/schemas/HttpMessage_List_ListAvailableChats.ChatDto__"
-      - $ref: "#/components/schemas/MutableAttributeHolder"
-      - $ref: "#/components/schemas/AttributeHolder"
-      - type: object
-        properties:
-          attributes:
-            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
-          status:
-            $ref: "#/components/schemas/HttpStatus"
-          cookies:
-            $ref: "#/components/schemas/Cookies"
     HttpResponse_Void_:
       required:
       - attributes
@@ -504,32 +449,6 @@ components:
           nullable: true
         textBased:
           type: boolean
-    Message:
-      required:
-      - body
-      type: object
-      properties:
-        body:
-          $ref: "#/components/schemas/Message.MessageBody"
-    Message.MessageBody:
-      required:
-      - mid
-      - seq
-      - text
-      type: object
-      properties:
-        mid:
-          type: string
-        seq:
-          type: integer
-          format: int32
-        text:
-          type: string
-    MessageBodyWriter_List_ListAvailableChats.ChatDto__:
-      type: object
-      properties:
-        blocking:
-          type: boolean
     MessageBodyWriter_Void_:
       type: object
       properties:
@@ -569,37 +488,5 @@ components:
       - Lax
       - Strict
       - None
-    User:
-      required:
-      - user_id
-      type: object
-      properties:
-        user_id:
-          type: integer
-          format: int64
     Void:
       type: object
-    Webhook.WebhookPayload:
-      required:
-      - message
-      - timestamp
-      - update_type
-      type: object
-      properties:
-        update_type:
-          type: string
-        timestamp:
-          type: string
-        message:
-          $ref: "#/components/schemas/Message"
-        user:
-          nullable: true
-          allOf:
-          - $ref: "#/components/schemas/User"
-        chat_id:
-          type: integer
-          format: int64
-          nullable: true
-        payload:
-          type: string
-          nullable: true
