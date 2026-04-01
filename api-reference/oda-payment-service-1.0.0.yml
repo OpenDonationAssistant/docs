@@ -1,0 +1,537 @@
+openapi: 3.0.1
+info:
+  title: oda-payment-service
+  version: 1.0.0
+paths:
+  /notification/cryptocloud:
+    post:
+      operationId: handleCryptocloudEvent
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                invoice_id:
+                  type: string
+                status:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: handleCryptocloudEvent 200 response
+  /notification/robokassa:
+    get:
+      operationId: handleRobokassaEvent
+      parameters:
+      - name: SignatureValue
+        in: query
+        required: true
+        explode: false
+        schema:
+          type: string
+      - name: SHP_ID
+        in: query
+        required: true
+        explode: false
+        schema:
+          type: string
+      - name: InvId
+        in: query
+        required: true
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: handleRobokassaEvent 200 response
+          content:
+            text/plain:
+              schema:
+                type: string
+  /notification/yookassa:
+    post:
+      operationId: handleYookassaEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/YooKassaNotification.PaymentEvent"
+        required: true
+      responses:
+        "200":
+          description: handleYookassaEvent 200 response
+  /notification/yoomoney:
+    post:
+      operationId: handleYooMoneyEvent
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+        required: true
+      responses:
+        "200":
+          description: handleYooMoneyEvent 200 response
+  /payments:
+    get:
+      operationId: list
+      parameters:
+      - name: statuses
+        in: query
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      responses:
+        "200":
+          description: list 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentController.PaymentDto"
+  /payments/commands/changelicense:
+    post:
+      operationId: changeLicense
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeLicense.ChangeLicenseCommand"
+        required: true
+      responses:
+        "200":
+          description: changeLicense 200 response
+  /payments/commands/complete:
+    put:
+      operationId: complete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompletePayment.CompletePaymentCommand"
+        required: true
+      responses:
+        "200":
+          description: complete 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompletePayment.CompletePaymentResponse"
+  /payments/commands/create:
+    put:
+      operationId: createDraft
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePayment.CreatePaymentCommand"
+        required: true
+      responses:
+        "200":
+          description: createDraft 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePayment.CreatePaymentResponse"
+  /payments/commands/deletegateway:
+    post:
+      operationId: deleteGateway
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteGateway.DeleteGatewayCommand"
+        required: true
+      responses:
+        "200":
+          description: deleteGateway 200 response
+  /payments/commands/setgateway:
+    post:
+      operationId: setGateway
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetGateway.SetGatewayCommand"
+        required: true
+      responses:
+        "200":
+          description: setGateway 200 response
+  /payments/commands/togglegateway:
+    post:
+      operationId: toggleGateway
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ToggleGateway.ToggleGatewayCommand"
+        required: true
+      responses:
+        "200":
+          description: toggleGateway 200 response
+  /payments/gateways:
+    get:
+      operationId: listGateways
+      parameters:
+      - name: recipientId
+        in: query
+        required: true
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: listGateways 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GatewayController.GatewayData"
+  /payments/{id}:
+    get:
+      operationId: get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentController.PaymentDto"
+components:
+  schemas:
+    Amount:
+      required:
+      - currency
+      - major
+      - minor
+      type: object
+      properties:
+        minor:
+          type: integer
+          format: int32
+        major:
+          type: integer
+          format: int32
+        currency:
+          type: string
+    ChangeLicense.ChangeLicenseCommand:
+      required:
+      - gateway
+      type: object
+      properties:
+        gateway:
+          type: string
+    CompletePayment.CompletePaymentCommand:
+      required:
+      - id
+      - paymentId
+      type: object
+      properties:
+        id:
+          type: string
+        paymentId:
+          type: string
+    CompletePayment.CompletePaymentResponse:
+      required:
+      - id
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+    CreatePayment.CreatePaymentCommand:
+      required:
+      - actions
+      - amount
+      - attachments
+      - gatewayCredId
+      - id
+      - message
+      - method
+      - nickname
+      - recipientId
+      type: object
+      properties:
+        id:
+          type: string
+        gatewayCredId:
+          type: string
+        nickname:
+          type: string
+        message:
+          type: string
+        recipientId:
+          type: string
+        method:
+          type: string
+        amount:
+          $ref: "#/components/schemas/Amount"
+        attachments:
+          type: array
+          items:
+            type: string
+        goal:
+          type: string
+          nullable: true
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreatePayment.CreatePaymentCommand.Action"
+        vote:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/CreatePayment.CreatePaymentCommand.Vote"
+        marker:
+          type: string
+          nullable: true
+    CreatePayment.CreatePaymentCommand.Action:
+      required:
+      - actionId
+      - amount
+      - id
+      - parameters
+      type: object
+      properties:
+        id:
+          type: string
+        actionId:
+          type: string
+        amount:
+          type: integer
+          format: int32
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+    CreatePayment.CreatePaymentCommand.Vote:
+      required:
+      - isNew
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        item:
+          type: string
+          nullable: true
+        isNew:
+          type: boolean
+    CreatePayment.CreatePaymentResponse:
+      required:
+      - token
+      type: object
+      properties:
+        operationUrl:
+          type: string
+          nullable: true
+        token:
+          type: string
+    DeleteGateway.DeleteGatewayCommand:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+    GatewayController.GatewayData:
+      required:
+      - enabled
+      - gateway
+      - id
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+        gateway:
+          type: string
+        type:
+          type: string
+        enabled:
+          type: boolean
+    PaymentController.PaymentDto:
+      required:
+      - actions
+      - amount
+      - attachments
+      - gateway
+      - gatewayCredentialId
+      - gatewayId
+      - id
+      - message
+      - method
+      - nickname
+      - recipientId
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        gateway:
+          type: string
+        gatewayId:
+          type: string
+        method:
+          type: string
+        nickname:
+          type: string
+        message:
+          type: string
+        recipientId:
+          type: string
+        amount:
+          $ref: "#/components/schemas/Amount"
+        confirmation:
+          type: string
+          nullable: true
+        gatewayCredentialId:
+          type: string
+        goal:
+          type: string
+          nullable: true
+        authorizationTimestamp:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+        attachments:
+          type: array
+          items:
+            type: string
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentController.PaymentDto.ActionDto"
+        auction:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/PaymentController.PaymentDto.AuctionDto"
+    PaymentController.PaymentDto.ActionDto:
+      required:
+      - actionId
+      - id
+      - parameters
+      type: object
+      properties:
+        id:
+          type: string
+        actionId:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+    PaymentController.PaymentDto.AuctionDto:
+      required:
+      - isNew
+      type: object
+      properties:
+        item:
+          type: string
+          nullable: true
+        isNew:
+          type: boolean
+    SetGateway.SetGatewayCommand:
+      required:
+      - enabled
+      - gateway
+      - gatewayId
+      - id
+      - secret
+      - token
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+        gatewayId:
+          type: string
+        token:
+          type: string
+        gateway:
+          type: string
+        secret:
+          type: string
+        type:
+          type: string
+        enabled:
+          type: boolean
+    ToggleGateway.ToggleGatewayCommand:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+    YooKassaClient.YooKassaAmount:
+      required:
+      - currency
+      - value
+      type: object
+      properties:
+        value:
+          type: number
+          format: double
+        currency:
+          type: string
+    YooKassaClient.YooKassaConfirmation:
+      required:
+      - confirmation_token
+      type: object
+      properties:
+        confirmation_token:
+          type: string
+    YooKassaClient.YooKassaPayment:
+      required:
+      - amount
+      - confirmation
+      - id
+      - payment_method
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        amount:
+          $ref: "#/components/schemas/YooKassaClient.YooKassaAmount"
+        confirmation:
+          $ref: "#/components/schemas/YooKassaClient.YooKassaConfirmation"
+        payment_method:
+          $ref: "#/components/schemas/YooKassaClient.YooKassaPaymentMethod"
+    YooKassaClient.YooKassaPaymentMethod:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+    YooKassaNotification.PaymentEvent:
+      required:
+      - event
+      - object
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+        event:
+          type: string
+        object:
+          $ref: "#/components/schemas/YooKassaClient.YooKassaPayment"
