@@ -1,0 +1,208 @@
+openapi: 3.0.1
+info:
+  title: oda-config-service
+  version: 1.0.0
+paths:
+  /config:
+    put:
+      operationId: put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigValue"
+        required: true
+      responses:
+        "200":
+          description: put 200 response
+  /config/commands/change-agreement:
+    post:
+      operationId: changeAgreement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeAgreement.ChangeAgreementCommand"
+        required: true
+      responses:
+        "200":
+          description: changeAgreement 200 response
+  /config/commands/change-socials:
+    post:
+      operationId: changeAgreement_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeSocials.ChangeSocialsCommand"
+        required: true
+      responses:
+        "200":
+          description: changeAgreement_1 200 response
+  /config/commands/create-config:
+    post:
+      operationId: createConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateConfig.CreateConfigCommand"
+        required: true
+      responses:
+        "200":
+          description: createConfig 200 response
+  /config/{id}:
+    post:
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigValue"
+        required: true
+      responses:
+        "200":
+          description: update 200 response
+  /config/{name}:
+    get:
+      operationId: get
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: ownerId
+        in: query
+        required: true
+        explode: false
+        schema:
+          type: string
+      - name: url
+        in: query
+        required: true
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigValue"
+components:
+  schemas:
+    Amount:
+      required:
+      - currency
+      - major
+      - minor
+      type: object
+      properties:
+        minor:
+          type: integer
+          format: int32
+        major:
+          type: integer
+          format: int32
+        currency:
+          type: string
+    ChangeAgreement.ChangeAgreementCommand:
+      required:
+      - gateway
+      type: object
+      properties:
+        gateway:
+          type: string
+    ChangeSocials.ChangeSocialsCommand:
+      required:
+      - id
+      - socials
+      type: object
+      properties:
+        id:
+          type: string
+        socials:
+          type: object
+          additionalProperties:
+            type: string
+    ConfigValue:
+      required:
+      - actions
+      - id
+      - name
+      - ownerId
+      - url
+      - value
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        ownerId:
+          type: string
+        url:
+          type: string
+        value:
+          type: object
+          additionalProperties:
+            type: object
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigValue.Action"
+    ConfigValue.Action:
+      required:
+      - category
+      - game
+      - id
+      - name
+      - price
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          $ref: "#/components/schemas/Amount"
+        category:
+          type: string
+        game:
+          type: string
+    CreateConfig.CreateConfigCommand:
+      required:
+      - displayName
+      - recipientId
+      - socialLinks
+      - url
+      type: object
+      properties:
+        recipientId:
+          type: string
+        url:
+          type: string
+        displayName:
+          type: string
+        socialLinks:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateConfig.SocialLink"
+    CreateConfig.SocialLink:
+      required:
+      - platform
+      - url
+      type: object
+      properties:
+        platform:
+          type: string
+        url:
+          type: string
