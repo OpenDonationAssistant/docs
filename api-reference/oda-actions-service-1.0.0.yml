@@ -368,9 +368,9 @@ components:
           items:
             $ref: "#/components/schemas/LinkActionsApi.ActionRequest"
     LinkActionsApi.LinkActionsResponse:
+      required:
+      - amount
       type: object
       properties:
         amount:
-          nullable: true
-          allOf:
-          - $ref: "#/components/schemas/Amount"
+          $ref: "#/components/schemas/Amount"
