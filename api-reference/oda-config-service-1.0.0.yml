@@ -29,7 +29,7 @@ paths:
           description: changeAgreement 200 response
   /config/commands/change-socials:
     post:
-      operationId: changeAgreement_1
+      operationId: changeSocials
       requestBody:
         content:
           application/json:
@@ -38,7 +38,7 @@ paths:
         required: true
       responses:
         "200":
-          description: changeAgreement_1 200 response
+          description: changeSocials 200 response
   /config/commands/create-config:
     post:
       operationId: createConfig
@@ -123,12 +123,9 @@ components:
           type: string
     ChangeSocials.ChangeSocialsCommand:
       required:
-      - id
       - socials
       type: object
       properties:
-        id:
-          type: string
         socials:
           type: object
           additionalProperties:
