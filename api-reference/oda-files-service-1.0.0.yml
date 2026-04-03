@@ -1,0 +1,113 @@
+openapi: 3.0.1
+info:
+  title: oda-files-service
+  version: 1.0.0
+paths:
+  /catalog:
+    get:
+      operationId: getCatalog
+      parameters:
+      - name: category
+        in: query
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      responses:
+        "200":
+          description: getCatalog 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CatalogItemView"
+  /files/{name}:
+    get:
+      operationId: get
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get 200 response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: byte
+    put:
+      operationId: put
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: public
+        in: query
+        explode: false
+        schema:
+          type: boolean
+          nullable: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+            encoding:
+              file:
+                contentType: application/octet-stream
+                explode: false
+        required: true
+      responses:
+        "200":
+          description: put 200 response
+  /generated/{name}:
+    get:
+      operationId: get_1
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get_1 200 response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: byte
+components:
+  schemas:
+    CatalogItemView:
+      required:
+      - category
+      - id
+      - name
+      - recipientId
+      - type
+      - url
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        recipientId:
+          type: string
+        category:
+          type: string
+        type:
+          type: string
+        url:
+          type: string
