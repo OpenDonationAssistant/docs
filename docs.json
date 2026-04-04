@@ -23,7 +23,7 @@
             "group": "History",
             "openapi": "api-reference/oda-history-service-1.0.0.yml",
             "pages": [
-              "description"
+              "history-service-description"
             ]
           },
           {
