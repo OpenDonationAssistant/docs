@@ -28,55 +28,94 @@
           },
           {
             "group": "Actions",
-            "openapi": "api-reference/oda-actions-service-1.0.0.yml"
+            "openapi": "api-reference/oda-actions-service-1.0.0.yml",
+            "pages": [
+              "actions-service-description"
+            ]
           },
           {
             "group": "Automation",
-            "openapi": "api-reference/oda-automation-service-1.0.0.yml"
+            "openapi": "api-reference/oda-automation-service-1.0.0.yml",
+            "pages": [
+              "automation-service-description"
+            ]
           },
           {
             "group": "Config",
-            "openapi": "api-reference/oda-config-service-1.0.0.yml"
+            "openapi": "api-reference/oda-config-service-1.0.0.yml",
+            "pages": [
+              "config-service-description"
+            ]
           },
           {
             "group": "Files",
-            "openapi": "api-reference/oda-files-service-1.0.0.yml"
+            "openapi": "api-reference/oda-files-service-1.0.0.yml",
+            "pages": [
+              "files-service-description"
+            ]
           },
           {
             "group": "Fonts",
-            "openapi": "api-reference/oda-font-service-1.0.0.yml"
+            "openapi": "api-reference/oda-font-service-1.0.0.yml",
+            "pages": [
+              "fonts-service-description"
+            ]
           },
           {
             "group": "Max Messanger",
-            "openapi": "api-reference/oda-max-service-1.0.0.yml"
+            "openapi": "api-reference/oda-max-service-1.0.0.yml",
+            "pages": [
+              "max-service-description"
+            ]
           },
           {
             "group": "Media",
-            "openapi": "api-reference/oda-media-service-1.0.0.yml"
+            "openapi": "api-reference/oda-media-service-1.0.0.yml",
+            "pages": [
+              "media-service-description"
+            ]
           },
           {
             "group": "News",
-            "openapi": "api-reference/oda-news-service-1.0.0.yml"
+            "openapi": "api-reference/oda-news-service-1.0.0.yml",
+            "pages": [
+              "news-service-description"
+            ]
           },
           {
             "group": "Payment",
-            "openapi": "api-reference/oda-payment-service-1.0.0.yml"
+            "openapi": "api-reference/oda-payment-service-1.0.0.yml",
+            "pages": [
+              "payment-service-description"
+            ]
           },
           {
             "group": "Recipient",
-            "openapi": "api-reference/oda-recipient-service-1.0.0.yml"
+            "openapi": "api-reference/oda-recipient-service-1.0.0.yml",
+            "pages": [
+              "recipient-service-description"
+            ]
           },
           {
             "group": "Twitch",
-            "openapi": "api-reference/oda-twitch-service-1.0.0.yml"
+            "openapi": "api-reference/oda-twitch-service-1.0.0.yml",
+            "pages": [
+              "twitch-service-description"
+            ]
           },
           {
             "group": "Widgets",
-            "openapi": "api-reference/oda-widget-service-1.0.0.yml"
+            "openapi": "api-reference/oda-widget-service-1.0.0.yml",
+            "pages": [
+              "untitled-page"
+            ]
           },
           {
             "group": "Subscriptions",
-            "openapi": "api-reference/oda-subscriptions-service-1.0.0.yml"
+            "openapi": "api-reference/oda-subscriptions-service-1.0.0.yml",
+            "pages": [
+              "subscriptions-service-description"
+            ]
           },
           {
             "group": "PubSub",

@@ -1,0 +1,12 @@
+---
+title: "Files Service Description"
+sidebarTitle: "Description"
+---
+
+[GitHub](https://github.com/OpenDonationAssistant/oda-files-service)   [DeepWiki](https://deepwiki.com/OpenDonationAssistant/oda-files-service)   [OpenAPI Spec](https://github.com/OpenDonationAssistant/docs/blob/main/api-reference/oda-files-service-1.0.0.yml)
+
+The service is divided into three primary functional domains:
+
+1. **File Management**: Securely handles user file uploads and retrievals using MinIO as the storage backend. It supports private user-specific buckets and public asset buckets.
+2. **Asset Catalog**: Maintains a registry of available assets (images, models, etc.) stored in a PostgreSQL database, allowing users to browse and filter available resources.
+3. **Generated Image Proxy**: Integrates with downstream AI services to fetch and serve generated images to clients without exposing internal service tokens.
