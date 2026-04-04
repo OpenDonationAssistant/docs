@@ -21,7 +21,10 @@
         "groups": [
           {
             "group": "History",
-            "openapi": "api-reference/oda-history-service-1.0.0.yml"
+            "openapi": "api-reference/oda-history-service-1.0.0.yml",
+            "pages": [
+              "description"
+            ]
           },
           {
             "group": "Actions",
@@ -32,12 +35,44 @@
             "openapi": "api-reference/oda-automation-service-1.0.0.yml"
           },
           {
+            "group": "Config",
+            "openapi": "api-reference/oda-config-service-1.0.0.yml"
+          },
+          {
+            "group": "Files",
+            "openapi": "api-reference/oda-files-service-1.0.0.yml"
+          },
+          {
             "group": "Fonts",
             "openapi": "api-reference/oda-font-service-1.0.0.yml"
           },
           {
+            "group": "History",
+            "openapi": "api-reference/oda-history-service-1.0.0.yml"
+          },
+          {
+            "group": "Max Messanger",
+            "openapi": "api-reference/oda-max-service-1.0.0.yml"
+          },
+          {
             "group": "Media",
             "openapi": "api-reference/oda-media-service-1.0.0.yml"
+          },
+          {
+            "group": "News",
+            "openapi": "api-reference/oda-news-service-1.0.0.yml"
+          },
+          {
+            "group": "Payment",
+            "openapi": "api-reference/oda-payment-service-1.0.0.yml"
+          },
+          {
+            "group": "Recipient",
+            "openapi": "api-reference/oda-recipient-service-1.0.0.yml"
+          },
+          {
+            "group": "Twitch",
+            "openapi": "api-reference/oda-twitch-service-1.0.0.yml"
           },
           {
             "group": "Widgets",
