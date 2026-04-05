@@ -46,6 +46,12 @@ paths:
   /max/commands/delete-account:
     post:
       operationId: deleteAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteAccount.DeleteAccountCommand"
+        required: true
       responses:
         "200":
           description: OK
@@ -154,6 +160,14 @@ components:
           type: string
         url:
           type: string
+    DeleteAccount.DeleteAccountCommand:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
     GenerateLink.TemporaryLink:
       required:
       - link
