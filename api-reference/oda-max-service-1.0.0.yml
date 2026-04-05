@@ -97,6 +97,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Void"
+  /max/commands/update-announcer:
+    post:
+      operationId: updateAnnouncer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAnnouncer.UpdateAnnouncerRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
 components:
   schemas:
     AddAnnouncer.AddAnnouncerRequest:
@@ -166,8 +182,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
     GenerateLink.TemporaryLink:
       required:
       - link
@@ -188,11 +203,42 @@ components:
           type: string
     MaxController.AccountDto:
       required:
+      - enabled
+      - id
+      - maxId
+      type: object
+      properties:
+        id:
+          type: string
+        maxId:
+          type: integer
+          format: int64
+        enabled:
+          type: boolean
+    UpdateAnnouncer.Button:
+      required:
+      - text
+      - url
+      type: object
+      properties:
+        text:
+          type: string
+        url:
+          type: string
+    UpdateAnnouncer.UpdateAnnouncerRequest:
+      required:
       - id
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
+        text:
+          type: string
+          nullable: true
+        buttons:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/UpdateAnnouncer.Button"
     Void:
       type: object
