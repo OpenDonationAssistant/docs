@@ -120,6 +120,8 @@ components:
       - buttons
       - chatId
       - text
+      - trigger
+      - type
       type: object
       properties:
         text:
@@ -131,6 +133,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AddAnnouncer.Button"
+        trigger:
+          type: string
+        type:
+          type: string
     AddAnnouncer.Button:
       required:
       - text
@@ -143,8 +149,10 @@ components:
           type: string
     AnnouncerData:
       required:
+      - announcerType
       - buttons
       - chatId
+      - condition
       - enabled
       - id
       - recipientId
@@ -166,6 +174,10 @@ components:
             $ref: "#/components/schemas/AnnouncerData.Button"
         enabled:
           type: boolean
+        condition:
+          type: string
+        announcerType:
+          type: string
     AnnouncerData.Button:
       required:
       - text
@@ -240,5 +252,11 @@ components:
           nullable: true
           items:
             $ref: "#/components/schemas/UpdateAnnouncer.Button"
+        trigger:
+          type: string
+          nullable: true
+        type:
+          type: string
+          nullable: true
     Void:
       type: object
