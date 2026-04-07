@@ -26,7 +26,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/AnnouncerData"
+                  $ref: "#/components/schemas/MaxController.AnnouncerDto"
   /max/commands/add-announcer:
     post:
       operationId: addAnnouncer
@@ -117,6 +117,7 @@ components:
   schemas:
     AddAnnouncer.AddAnnouncerRequest:
       required:
+      - accountId
       - buttons
       - chatId
       - text
@@ -125,6 +126,8 @@ components:
       type: object
       properties:
         text:
+          type: string
+        accountId:
           type: string
         chatId:
           type: integer
@@ -146,37 +149,6 @@ components:
         text:
           type: string
         url:
-          type: string
-    AnnouncerData:
-      required:
-      - announcerType
-      - buttons
-      - chatId
-      - condition
-      - enabled
-      - id
-      - recipientId
-      - text
-      type: object
-      properties:
-        id:
-          type: string
-        recipientId:
-          type: string
-        chatId:
-          type: integer
-          format: int64
-        text:
-          type: string
-        buttons:
-          type: array
-          items:
-            $ref: "#/components/schemas/AnnouncerData.Button"
-        enabled:
-          type: boolean
-        condition:
-          type: string
-        announcerType:
           type: string
     AnnouncerData.Button:
       required:
@@ -227,6 +199,40 @@ components:
           format: int64
         enabled:
           type: boolean
+    MaxController.AnnouncerDto:
+      required:
+      - accountId
+      - announcerType
+      - buttons
+      - chatId
+      - condition
+      - enabled
+      - id
+      - recipientId
+      - text
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        accountId:
+          type: string
+        chatId:
+          type: integer
+          format: int64
+        text:
+          type: string
+        buttons:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnnouncerData.Button"
+        enabled:
+          type: boolean
+        condition:
+          type: string
+        announcerType:
+          type: string
     UpdateAnnouncer.Button:
       required:
       - text
