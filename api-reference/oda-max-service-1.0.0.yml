@@ -65,28 +65,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Void"
-  /max/commands/delete-announcer:
-    post:
-      operationId: deleteAnnouncer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/DeleteAnnouncer.DeleteAnnouncerCommand"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Void"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Void"
   /max/commands/generate-link:
     post:
       operationId: generateLink
@@ -119,7 +97,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Void"
-  /max/commands/update-announcer:
+  /max/commands/update-announcers:
     post:
       operationId: updateAnnouncer
       requestBody:
@@ -189,13 +167,6 @@ components:
       properties:
         id:
           type: string
-    DeleteAnnouncer.DeleteAnnouncerCommand:
-      required:
-      - announcerId
-      type: object
-      properties:
-        announcerId:
-          type: string
     GenerateLink.TemporaryLink:
       required:
       - link
@@ -262,17 +233,7 @@ components:
           type: string
         announcerType:
           type: string
-    UpdateAnnouncer.Button:
-      required:
-      - text
-      - url
-      type: object
-      properties:
-        text:
-          type: string
-        url:
-          type: string
-    UpdateAnnouncer.UpdateAnnouncerRequest:
+    UpdateAnnouncer.AnnouncerUpdate:
       required:
       - id
       type: object
@@ -293,5 +254,62 @@ components:
         type:
           type: string
           nullable: true
+        enabled:
+          type: boolean
+          nullable: true
+    UpdateAnnouncer.Button:
+      required:
+      - text
+      - url
+      type: object
+      properties:
+        text:
+          type: string
+        url:
+          type: string
+    UpdateAnnouncer.NewAnnouncer:
+      required:
+      - accountId
+      - buttons
+      - chatId
+      - text
+      - trigger
+      - type
+      type: object
+      properties:
+        text:
+          type: string
+        accountId:
+          type: string
+        chatId:
+          type: integer
+          format: int64
+        buttons:
+          type: array
+          items:
+            $ref: "#/components/schemas/UpdateAnnouncer.Button"
+        trigger:
+          type: string
+        type:
+          type: string
+    UpdateAnnouncer.UpdateAnnouncerRequest:
+      required:
+      - added
+      - deleted
+      - updated
+      type: object
+      properties:
+        added:
+          type: array
+          items:
+            $ref: "#/components/schemas/UpdateAnnouncer.NewAnnouncer"
+        updated:
+          type: array
+          items:
+            $ref: "#/components/schemas/UpdateAnnouncer.AnnouncerUpdate"
+        deleted:
+          type: array
+          items:
+            type: string
     Void:
       type: object
