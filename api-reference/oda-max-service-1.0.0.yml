@@ -65,6 +65,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Void"
+  /max/commands/delete-announcer:
+    post:
+      operationId: deleteAnnouncer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteAnnouncer.DeleteAnnouncerCommand"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
   /max/commands/generate-link:
     post:
       operationId: generateLink
@@ -166,6 +188,13 @@ components:
       type: object
       properties:
         id:
+          type: string
+    DeleteAnnouncer.DeleteAnnouncerCommand:
+      required:
+      - announcerId
+      type: object
+      properties:
+        announcerId:
           type: string
     GenerateLink.TemporaryLink:
       required:
