@@ -87,6 +87,28 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ListAvailableChats.ChatDto"
+  /max/commands/toggle-account:
+    post:
+      operationId: toggleAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ToggleAccount.ToggleAccountCommand"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
   /max/commands/toggle-announcer:
     post:
       operationId: disableAnnouncer
@@ -139,7 +161,7 @@ components:
         trigger:
           type: string
         type:
-          type: string
+          $ref: "#/components/schemas/AnnouncerData.AnnouncerType"
     AddAnnouncer.Button:
       required:
       - text
@@ -150,6 +172,11 @@ components:
           type: string
         url:
           type: string
+    AnnouncerData.AnnouncerType:
+      type: string
+      enum:
+      - ANNOUNCE_STREAM_AND_DELETE
+      - ANNOUNCE_STREAM
     AnnouncerData.Button:
       required:
       - text
@@ -205,7 +232,6 @@ components:
       - announcerType
       - buttons
       - chatId
-      - condition
       - enabled
       - id
       - recipientId
@@ -229,10 +255,18 @@ components:
             $ref: "#/components/schemas/AnnouncerData.Button"
         enabled:
           type: boolean
-        condition:
-          type: string
         announcerType:
+          $ref: "#/components/schemas/AnnouncerData.AnnouncerType"
+    ToggleAccount.ToggleAccountCommand:
+      required:
+      - enabled
+      - id
+      type: object
+      properties:
+        id:
           type: string
+        enabled:
+          type: boolean
     UpdateAnnouncer.AnnouncerUpdate:
       required:
       - id
@@ -252,8 +286,9 @@ components:
           type: string
           nullable: true
         type:
-          type: string
           nullable: true
+          allOf:
+          - $ref: "#/components/schemas/AnnouncerData.AnnouncerType"
         enabled:
           type: boolean
           nullable: true
@@ -273,7 +308,6 @@ components:
       - buttons
       - chatId
       - text
-      - trigger
       - type
       type: object
       properties:
@@ -288,10 +322,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/UpdateAnnouncer.Button"
-        trigger:
-          type: string
         type:
-          type: string
+          $ref: "#/components/schemas/AnnouncerData.AnnouncerType"
     UpdateAnnouncer.UpdateAnnouncerRequest:
       required:
       - added
