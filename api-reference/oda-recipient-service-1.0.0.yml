@@ -3,6 +3,16 @@ info:
   title: oda-recipient-service
   version: 1.0.0
 paths:
+  /:
+    get:
+      operationId: getSettings
+      responses:
+        "200":
+          description: Recipient Settings with Features
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SettingsController.SettingsDto"
   /otp/create:
     post:
       operationId: createOtp
@@ -651,6 +661,36 @@ components:
           type: object
           additionalProperties:
             type: object
+    SettingsController.Feature:
+      required:
+      - name
+      - status
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          $ref: "#/components/schemas/SettingsController.FeatureStatus"
+    SettingsController.FeatureStatus:
+      type: string
+      enum:
+      - ENABLED
+      - DISABLED
+    SettingsController.SettingsDto:
+      required:
+      - features
+      - id
+      - recipientId
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        features:
+          type: array
+          items:
+            $ref: "#/components/schemas/SettingsController.Feature"
     ToggleToken.ToggleTokenCommand:
       required:
       - enabled
