@@ -12,31 +12,7 @@ info:
 tags:
 - name: templates
   description: Template management operations
-- name: update
-  description: Widget update operations
-- name: widgets
-  description: Widget management operations
-- name: admin
-  description: Administrative operations
 paths:
-  /admin/widgets/dump:
-    post:
-      tags:
-      - admin
-      summary: Dump widget configs
-      description: Dumps all widget configurations
-      operationId: dumpCongigs
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/DumpConfigsApi.DumpConfigsRequest"
-        required: true
-      responses:
-        "200":
-          description: Configs dumped successfully
-        "401":
-          description: Unauthorized
   /templates:
     get:
       tags:
@@ -48,6 +24,7 @@ paths:
       - name: widget
         in: query
         required: true
+        explode: false
         schema:
           type: string
       responses:
@@ -85,18 +62,12 @@ paths:
           description: Unauthorized
   /update/update:
     post:
-      tags:
-      - update
-      summary: Run update
-      description: Runs widget update
       operationId: runUpdate
       responses:
         "200":
-          description: Update completed successfully
+          description: runUpdate 200 response
   /widgets:
     get:
-      tags:
-      - widgets
       summary: List widgets
       description: Lists all widgets for the authenticated user
       operationId: list
@@ -111,8 +82,6 @@ paths:
           description: Unauthorized
   /widgets/commands/add:
     post:
-      tags:
-      - widgets
       summary: Add widget
       description: Creates a new widget
       operationId: addWidget
@@ -133,8 +102,6 @@ paths:
           description: Unauthorized
   /widgets/commands/reorder:
     post:
-      tags:
-      - widgets
       summary: Reorder widgets
       description: Reorders widgets for the authenticated user
       operationId: reorder
@@ -151,8 +118,6 @@ paths:
           description: Unauthorized
   /widgets/commands/toggle:
     post:
-      tags:
-      - widgets
       summary: Toggle widget
       description: Toggles a widget by ID
       operationId: toggleWidget
@@ -175,8 +140,6 @@ paths:
           description: Widget not found
   /widgets/{id}:
     get:
-      tags:
-      - widgets
       summary: Get widget
       description: Gets a widget by ID
       operationId: get
@@ -198,8 +161,6 @@ paths:
         "404":
           description: Widget not found
     delete:
-      tags:
-      - widgets
       summary: Delete widget
       description: Deletes a widget by ID
       operationId: delete
@@ -217,8 +178,6 @@ paths:
         "404":
           description: Widget not found
     patch:
-      tags:
-      - widgets
       summary: Update widget
       description: Updates a widget by ID
       operationId: update
@@ -276,14 +235,8 @@ components:
           type: array
           items:
             type: object
-            additionalProperties: true
-    DumpConfigsApi.DumpConfigsRequest:
-      required:
-      - widgetType
-      type: object
-      properties:
-        widgetType:
-          type: string
+            additionalProperties:
+              type: object
     ReorderCommand:
       required:
       - ids
@@ -309,7 +262,8 @@ components:
           type: array
           items:
             type: object
-            additionalProperties: true
+            additionalProperties:
+              type: object
         recipientId:
           type: string
     ToggleWidgetApi.ToogleWidgetRequest:
@@ -327,7 +281,8 @@ components:
           nullable: true
         config:
           type: object
-          additionalProperties: true
+          additionalProperties:
+            type: object
           nullable: true
         sortOrder:
           type: integer
@@ -358,7 +313,8 @@ components:
           type: string
         config:
           type: object
-          additionalProperties: true
+          additionalProperties:
+            type: object
         enabled:
           type: boolean
         deleted:
