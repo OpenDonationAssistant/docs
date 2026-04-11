@@ -3,16 +3,6 @@ info:
   title: oda-recipient-service
   version: 1.0.0
 paths:
-  /:
-    get:
-      operationId: getSettings
-      responses:
-        "200":
-          description: Recipient Settings with Features
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SettingsController.SettingsDto"
   /otp/create:
     post:
       operationId: createOtp
@@ -93,6 +83,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HttpResponse_Void_"
+  /recipients/settings:
+    get:
+      operationId: getSettings
+      responses:
+        "200":
+          description: Recipient Settings with Features
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SettingsController.SettingsDto"
   /recipients/tokens:
     get:
       operationId: listTokens
