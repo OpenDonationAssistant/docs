@@ -9,14 +9,9 @@ info:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
   version: 1.0.0
-tags:
-- name: templates
-  description: Template management operations
 paths:
   /templates:
     get:
-      tags:
-      - templates
       summary: List templates
       description: Lists all templates for the authenticated user
       operationId: listTemplates
@@ -40,8 +35,6 @@ paths:
           description: Unauthorized
   /templates/commands/create:
     post:
-      tags:
-      - templates
       summary: Create template
       description: Creates a new template
       operationId: execute
@@ -60,12 +53,6 @@ paths:
                 $ref: "#/components/schemas/TemplateDto"
         "401":
           description: Unauthorized
-  /update/update:
-    post:
-      operationId: runUpdate
-      responses:
-        "200":
-          description: runUpdate 200 response
   /widgets:
     get:
       summary: List widgets
