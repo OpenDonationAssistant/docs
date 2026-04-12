@@ -4,6 +4,11 @@ info:
   version: 1.0.0
 paths:
   /notification/cryptocloud:
+    get:
+      operationId: emptyResponse
+      responses:
+        "200":
+          description: emptyResponse 200 response
     post:
       operationId: handleCryptocloudEvent
       requestBody:
