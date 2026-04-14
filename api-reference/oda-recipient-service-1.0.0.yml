@@ -676,10 +676,30 @@ components:
       enum:
       - ENABLED
       - DISABLED
+    SettingsController.LogLevel:
+      type: string
+      enum:
+      - TRACE
+      - DEBUG
+      - INFO
+      - WARN
+      - ERROR
+      - DISABLED
+    SettingsController.LogLevels:
+      required:
+      - level
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        level:
+          $ref: "#/components/schemas/SettingsController.LogLevel"
     SettingsController.SettingsDto:
       required:
       - features
       - id
+      - logLevels
       - recipientId
       type: object
       properties:
@@ -691,6 +711,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SettingsController.Feature"
+        logLevels:
+          type: array
+          items:
+            $ref: "#/components/schemas/SettingsController.LogLevels"
     ToggleToken.ToggleTokenCommand:
       required:
       - enabled
