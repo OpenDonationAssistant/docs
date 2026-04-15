@@ -1,0 +1,20 @@
+openapi: 3.0.1
+info:
+  title: oda-vk-service
+  version: "0.0"
+paths:
+  /vklive/events:
+    post:
+      operationId: listenVklive
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: listenVklive 200 response
