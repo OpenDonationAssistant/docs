@@ -39,6 +39,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HttpResponse_Void_"
+  /history/commands/repeat-alert:
+    post:
+      summary: Repeat an alert
+      description: Repeats an alert for a given history item
+      operationId: repeatAlert
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RepeatAlertApi.RepeatAlertCommand"
+        required: true
+      responses:
+        "200":
+          description: Successfully repeated the alert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+        "404":
+          description: History item not found
   /history/get:
     post:
       summary: Get donation history
@@ -568,6 +588,13 @@ components:
       - CURSOR_NEXT
       - CURSOR_PREVIOUS
       - OFFSET
+    RepeatAlertApi.RepeatAlertCommand:
+      type: object
+      properties:
+        historyItemId:
+          type: string
+          description: ID of the history item
+      description: Command to repeat an alert
     SameSite:
       type: string
       enum:
