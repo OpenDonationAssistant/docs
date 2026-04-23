@@ -117,6 +117,16 @@ paths:
       responses:
         "200":
           description: deleteToken 200 response
+  /recipients/tokens/get-twitch-access-token:
+    post:
+      operationId: getTwitchAccessToken
+      responses:
+        "200":
+          description: getTwitchAccessToken 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_GetTwitchAccessToken.AccessToken_"
   /recipients/tokens/getdonationalertstoken:
     post:
       operationId: getDonationAlertsToken
@@ -395,6 +405,13 @@ components:
       properties:
         authorizationCode:
           type: string
+    GetTwitchAccessToken.AccessToken:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          type: string
     GetTwitchToken.GetTwitchTokenCommand:
       required:
       - authorizationCode
@@ -439,6 +456,39 @@ components:
           contentType:
             type: string
             nullable: true
+    HttpMessage_GetTwitchAccessToken.AccessToken_:
+      required:
+      - attributes
+      - body
+      - characterEncoding
+      - contentType
+      - headers
+      - locale
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          headers:
+            $ref: "#/components/schemas/HttpHeaders"
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          body:
+            $ref: "#/components/schemas/GetTwitchAccessToken.AccessToken"
+          bodyWriter:
+            nullable: true
+            allOf:
+            - $ref: "#/components/schemas/MessageBodyWriter_GetTwitchAccessToken.AccessToken_"
+          characterEncoding:
+            type: string
+          locale:
+            type: string
+          contentLength:
+            type: integer
+            format: int64
+          contentType:
+            $ref: "#/components/schemas/MediaType"
     HttpMessage_Void_:
       required:
       - attributes
@@ -472,6 +522,22 @@ components:
             format: int64
           contentType:
             $ref: "#/components/schemas/MediaType"
+    HttpResponse_GetTwitchAccessToken.AccessToken_:
+      required:
+      - attributes
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/HttpMessage_GetTwitchAccessToken.AccessToken_"
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          status:
+            $ref: "#/components/schemas/HttpStatus"
+          cookies:
+            $ref: "#/components/schemas/Cookies"
     HttpResponse_Void_:
       required:
       - attributes
@@ -600,6 +666,11 @@ components:
           type: string
           nullable: true
         textBased:
+          type: boolean
+    MessageBodyWriter_GetTwitchAccessToken.AccessToken_:
+      type: object
+      properties:
+        blocking:
           type: boolean
     MessageBodyWriter_Void_:
       type: object
