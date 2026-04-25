@@ -44,24 +44,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Void"
-  /history/add:
-    post:
-      summary: Add a new history item
-      description: Creates a new donation history item for the authenticated user
-      operationId: oldAddHistoryItem
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand"
-        required: true
-      responses:
-        "200":
-          description: Successfully created the history item
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HttpResponse_Void_"
   /history/commands/add-item:
     post:
       summary: Add a new history item
@@ -138,6 +120,11 @@ components:
           description: Attached media files
           items:
             $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.Attachment"
+        links:
+          type: array
+          description: Attached media links
+          items:
+            type: string
         goals:
           type: array
           description: Target goals
