@@ -449,6 +449,9 @@ components:
         is_anonymous:
           type: boolean
           nullable: true
+        is_permanent:
+          type: boolean
+          nullable: true
         message:
           type: object
           nullable: true
