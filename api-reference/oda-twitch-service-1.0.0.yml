@@ -3,28 +3,6 @@ info:
   title: oda-twitch-service
   version: 1.0.0
 paths:
-  /twitch/events:
-    post:
-      operationId: twitchWebhook
-      parameters:
-      - name: Twitch-Eventsub-Message-Type
-        in: header
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TwitchEventsWebhook.Message"
-        required: true
-      responses:
-        "200":
-          description: twitchWebhook 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HttpResponse_String_"
   /twitch/subscribe:
     post:
       operationId: subscribeTwitchEvents
@@ -182,39 +160,6 @@ components:
           contentType:
             type: string
             nullable: true
-    HttpMessage_String_:
-      required:
-      - attributes
-      - body
-      - characterEncoding
-      - contentType
-      - headers
-      - locale
-      type: object
-      allOf:
-      - $ref: "#/components/schemas/MutableAttributeHolder"
-      - $ref: "#/components/schemas/AttributeHolder"
-      - type: object
-        properties:
-          headers:
-            $ref: "#/components/schemas/HttpHeaders"
-          attributes:
-            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
-          body:
-            type: string
-          bodyWriter:
-            nullable: true
-            allOf:
-            - $ref: "#/components/schemas/MessageBodyWriter_String_"
-          characterEncoding:
-            type: string
-          locale:
-            type: string
-          contentLength:
-            type: integer
-            format: int64
-          contentType:
-            $ref: "#/components/schemas/MediaType"
     HttpMessage_Void_:
       required:
       - attributes
@@ -248,22 +193,6 @@ components:
             format: int64
           contentType:
             $ref: "#/components/schemas/MediaType"
-    HttpResponse_String_:
-      required:
-      - attributes
-      type: object
-      allOf:
-      - $ref: "#/components/schemas/HttpMessage_String_"
-      - $ref: "#/components/schemas/MutableAttributeHolder"
-      - $ref: "#/components/schemas/AttributeHolder"
-      - type: object
-        properties:
-          attributes:
-            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
-          status:
-            $ref: "#/components/schemas/HttpStatus"
-          cookies:
-            $ref: "#/components/schemas/Cookies"
     HttpResponse_Void_:
       required:
       - attributes
@@ -383,11 +312,6 @@ components:
           nullable: true
         textBased:
           type: boolean
-    MessageBodyWriter_String_:
-      type: object
-      properties:
-        blocking:
-          type: boolean
     MessageBodyWriter_Void_:
       type: object
       properties:
@@ -434,83 +358,6 @@ components:
       properties:
         userAccessToken:
           type: string
-    TwitchEventsWebhook.Event:
-      type: object
-      properties:
-        user_name:
-          type: string
-          nullable: true
-        tier:
-          type: string
-          nullable: true
-        is_gift:
-          type: boolean
-          nullable: true
-        is_anonymous:
-          type: boolean
-          nullable: true
-        is_permanent:
-          type: boolean
-          nullable: true
-        message:
-          type: object
-          nullable: true
-        bits:
-          type: integer
-          format: int32
-          nullable: true
-        followed_at:
-          type: string
-          nullable: true
-        from_broadcaster_user_name:
-          type: string
-          nullable: true
-        viewers:
-          type: integer
-          format: int32
-          nullable: true
-        total:
-          type: integer
-          format: int32
-          nullable: true
-        cumulative_total:
-          type: integer
-          format: int32
-          nullable: true
-        streak_months:
-          type: integer
-          format: int32
-          nullable: true
-        duration_months:
-          type: integer
-          format: int32
-          nullable: true
-    TwitchEventsWebhook.Message:
-      required:
-      - subscription
-      type: object
-      properties:
-        challenge:
-          type: string
-          nullable: true
-        subscription:
-          $ref: "#/components/schemas/TwitchEventsWebhook.Subscription"
-        event:
-          nullable: true
-          allOf:
-          - $ref: "#/components/schemas/TwitchEventsWebhook.Event"
-    TwitchEventsWebhook.Subscription:
-      required:
-      - condition
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-        condition:
-          type: object
-          additionalProperties:
-            type: string
     UnsubscribeTwitchEvents.UnsubscribeAllTwitchEventCommand:
       required:
       - userAccessToken
