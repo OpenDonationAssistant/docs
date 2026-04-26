@@ -70,23 +70,6 @@ paths:
       responses:
         "200":
           description: put 200 response
-  /generated/{name}:
-    get:
-      operationId: get_1
-      parameters:
-      - name: name
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: get_1 200 response
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: byte
 components:
   schemas:
     CatalogItemView:
