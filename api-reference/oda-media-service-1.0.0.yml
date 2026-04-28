@@ -129,7 +129,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HttpResponse_VideoData_"
+                $ref: "#/components/schemas/HttpResponse_PrepareVideo.PrepareVideoResponse_"
   /media/video/{ids}:
     get:
       tags:
@@ -1164,7 +1164,7 @@ components:
             nullable: true
             allOf:
             - $ref: "#/components/schemas/MediaType"
-    HttpMessage_VideoData_:
+    HttpMessage_PrepareVideo.PrepareVideoResponse_:
       type: object
       allOf:
       - $ref: "#/components/schemas/MutableAttributeHolder"
@@ -1185,11 +1185,11 @@ components:
           body:
             nullable: true
             allOf:
-            - $ref: "#/components/schemas/VideoData"
+            - $ref: "#/components/schemas/PrepareVideo.PrepareVideoResponse"
           bodyWriter:
             nullable: true
             allOf:
-            - $ref: "#/components/schemas/MessageBodyWriter_VideoData_"
+            - $ref: "#/components/schemas/MessageBodyWriter_PrepareVideo.PrepareVideoResponse_"
           characterEncoding:
             type: string
           locale:
@@ -1256,10 +1256,10 @@ components:
             $ref: "#/components/schemas/HttpStatus"
           cookies:
             $ref: "#/components/schemas/Cookies"
-    HttpResponse_VideoData_:
+    HttpResponse_PrepareVideo.PrepareVideoResponse_:
       type: object
       allOf:
-      - $ref: "#/components/schemas/HttpMessage_VideoData_"
+      - $ref: "#/components/schemas/HttpMessage_PrepareVideo.PrepareVideoResponse_"
       - $ref: "#/components/schemas/MutableAttributeHolder"
       - $ref: "#/components/schemas/AttributeHolder"
       - required:
@@ -1443,7 +1443,7 @@ components:
       properties:
         blocking:
           type: boolean
-    MessageBodyWriter_VideoData_:
+    MessageBodyWriter_PrepareVideo.PrepareVideoResponse_:
       type: object
       properties:
         blocking:
@@ -1732,6 +1732,31 @@ components:
           type: string
         recipientId:
           type: string
+    PrepareVideo.PrepareVideoResponse:
+      required:
+      - cost
+      - id
+      - originId
+      - provider
+      - thumbnail
+      - title
+      - url
+      type: object
+      properties:
+        id:
+          type: string
+        originId:
+          type: string
+        provider:
+          type: string
+        url:
+          type: string
+        title:
+          type: string
+        thumbnail:
+          type: string
+        cost:
+          $ref: "#/components/schemas/Amount"
     Principal:
       type: object
       properties:
