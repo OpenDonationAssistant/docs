@@ -67,6 +67,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateRecipient.CreateRecipientCommandResponse"
+  /recipients/commands/link-discord:
+    post:
+      operationId: linkDiscord
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkDiscord.LinkDiscordCommand"
+        required: true
+      responses:
+        "200":
+          description: linkDiscord 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
   /recipients/commands/update-email:
     post:
       operationId: updateEmail
@@ -588,6 +604,13 @@ components:
         logged:
           type: boolean
         id:
+          type: string
+    LinkDiscord.LinkDiscordCommand:
+      required:
+      - authorizationCode
+      type: object
+      properties:
+        authorizationCode:
           type: string
     MediaType:
       required:
