@@ -9,12 +9,26 @@ paths:
       description: Retrieves paginated donation history for the authenticated user
       operationId: getHistory
       parameters:
-      - name: pageable
+      - name: page
         in: query
-        required: true
-        explode: false
+        description: Zero-indexed page number (0-based)
+        required: false
         schema:
-          $ref: "#/components/schemas/Pageable"
+          minimum: 0
+          type: integer
+          format: int32
+          example: 0
+      - name: size
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          format: int32
+      - name: sort
+        in: query
+        description: "Sorting criteria in format: property,asc|desc"
+        schema:
+          type: string
       - name: systems
         in: query
         explode: false
