@@ -45,6 +45,20 @@ paths:
           nullable: true
           items:
             type: string
+      - name: after
+        in: query
+        explode: false
+        schema:
+          type: string
+          format: date-time
+          nullable: true
+      - name: before
+        in: query
+        explode: false
+        schema:
+          type: string
+          format: date-time
+          nullable: true
       responses:
         "200":
           description: Successfully retrieved history items
@@ -76,6 +90,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HttpResponse_Void_"
+  /history/commands/print-csv:
+    post:
+      operationId: printCsv
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PrintCsv.PrintCsvCommand"
+        required: true
+      responses:
+        "200":
+          description: printCsv 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_PrintCsv.PrintCsvResponse_"
   /history/commands/repeat-alert:
     post:
       summary: Repeat an alert
@@ -96,6 +126,39 @@ paths:
                 $ref: "#/components/schemas/HttpResponse_Void_"
         "404":
           description: History item not found
+  /history/csv/{id}:
+    get:
+      operationId: downloadCsv
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: downloadCsv 200 response
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+  /history/csv/{id}/status:
+    get:
+      operationId: getCsvStatus
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: getCsvStatus 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DownloadCsv.CsvStatus"
 components:
   schemas:
     AddHistoryItemApi.AddHistoryItemCommand:
@@ -373,6 +436,13 @@ components:
             type: array
             items:
               $ref: "#/components/schemas/Cookie"
+    DownloadCsv.CsvStatus:
+      required:
+      - ready
+      type: object
+      properties:
+        ready:
+          type: boolean
     GetHistoryApi.GetHistoryResponse:
       type: object
       allOf:
@@ -566,6 +636,39 @@ components:
           contentType:
             type: string
             nullable: true
+    HttpMessage_PrintCsv.PrintCsvResponse_:
+      required:
+      - attributes
+      - body
+      - characterEncoding
+      - contentType
+      - headers
+      - locale
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          headers:
+            $ref: "#/components/schemas/HttpHeaders"
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          body:
+            $ref: "#/components/schemas/PrintCsv.PrintCsvResponse"
+          bodyWriter:
+            nullable: true
+            allOf:
+            - $ref: "#/components/schemas/MessageBodyWriter_PrintCsv.PrintCsvResponse_"
+          characterEncoding:
+            type: string
+          locale:
+            type: string
+          contentLength:
+            type: integer
+            format: int64
+          contentType:
+            $ref: "#/components/schemas/MediaType"
     HttpMessage_Void_:
       required:
       - attributes
@@ -599,6 +702,22 @@ components:
             format: int64
           contentType:
             $ref: "#/components/schemas/MediaType"
+    HttpResponse_PrintCsv.PrintCsvResponse_:
+      required:
+      - attributes
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/HttpMessage_PrintCsv.PrintCsvResponse_"
+      - $ref: "#/components/schemas/MutableAttributeHolder"
+      - $ref: "#/components/schemas/AttributeHolder"
+      - type: object
+        properties:
+          attributes:
+            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
+          status:
+            $ref: "#/components/schemas/HttpStatus"
+          cookies:
+            $ref: "#/components/schemas/Cookies"
     HttpResponse_Void_:
       required:
       - attributes
@@ -718,6 +837,11 @@ components:
           nullable: true
         textBased:
           type: boolean
+    MessageBodyWriter_PrintCsv.PrintCsvResponse_:
+      type: object
+      properties:
+        blocking:
+          type: boolean
     MessageBodyWriter_Void_:
       type: object
       properties:
@@ -784,6 +908,34 @@ components:
       - CURSOR_NEXT
       - CURSOR_PREVIOUS
       - OFFSET
+    PrintCsv.PrintCsvCommand:
+      type: object
+      properties:
+        systems:
+          type: array
+          nullable: true
+          items:
+            type: string
+        events:
+          type: array
+          nullable: true
+          items:
+            type: string
+        after:
+          type: string
+          format: date-time
+          nullable: true
+        before:
+          type: string
+          format: date-time
+          nullable: true
+    PrintCsv.PrintCsvResponse:
+      required:
+      - printId
+      type: object
+      properties:
+        printId:
+          type: string
     RepeatAlertApi.RepeatAlertCommand:
       type: object
       properties:
