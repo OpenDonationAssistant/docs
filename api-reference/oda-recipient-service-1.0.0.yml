@@ -83,6 +83,70 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HttpResponse_Void_"
+  /recipients/commands/link-donationalerts:
+    post:
+      operationId: getDonationAlertsToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkDonationAlerts.GetDonationAlertsTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: getDonationAlertsToken 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+  /recipients/commands/link-kick:
+    post:
+      operationId: linkDiscord_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkKick.LinkKickCommand"
+        required: true
+      responses:
+        "200":
+          description: linkDiscord_1 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+  /recipients/commands/link-twitch:
+    post:
+      operationId: linkTwitch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkTwitch.GetTwitchTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: linkTwitch 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
+  /recipients/commands/link-vklive:
+    post:
+      operationId: getVKLiveToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkVklive.GetVKLiveTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: getVKLiveToken 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
   /recipients/commands/update-email:
     post:
       operationId: updateEmail
@@ -145,54 +209,6 @@ paths:
                 $ref: "#/components/schemas/GetTwitchAccessToken.AccessToken"
         "401":
           description: Unauthorized or not found
-  /recipients/tokens/getdonationalertstoken:
-    post:
-      operationId: getDonationAlertsToken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GetDonationAlertsToken.GetDonationAlertsTokenCommand"
-        required: true
-      responses:
-        "200":
-          description: getDonationAlertsToken 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HttpResponse_Void_"
-  /recipients/tokens/gettwitchtoken:
-    post:
-      operationId: getTwitchToken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GetTwitchToken.GetTwitchTokenCommand"
-        required: true
-      responses:
-        "200":
-          description: getTwitchToken 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HttpResponse_Void_"
-  /recipients/tokens/getvklivetoken:
-    post:
-      operationId: getVKLiveToken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GetVKLiveToken.GetVKLiveTokenCommand"
-        required: true
-      responses:
-        "200":
-          description: getVKLiveToken 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HttpResponse_Void_"
   /recipients/tokens/settoken:
     post:
       operationId: setToken
@@ -416,33 +432,12 @@ components:
       properties:
         refreshToken:
           type: string
-    GetDonationAlertsToken.GetDonationAlertsTokenCommand:
-      required:
-      - authorizationCode
-      type: object
-      properties:
-        authorizationCode:
-          type: string
     GetTwitchAccessToken.AccessToken:
       required:
       - token
       type: object
       properties:
         token:
-          type: string
-    GetTwitchToken.GetTwitchTokenCommand:
-      required:
-      - authorizationCode
-      type: object
-      properties:
-        authorizationCode:
-          type: string
-    GetVKLiveToken.GetVKLiveTokenCommand:
-      required:
-      - authorizationCode
-      type: object
-      properties:
-        authorizationCode:
           type: string
     Headers:
       type: object
@@ -606,6 +601,37 @@ components:
         id:
           type: string
     LinkDiscord.LinkDiscordCommand:
+      required:
+      - authorizationCode
+      type: object
+      properties:
+        authorizationCode:
+          type: string
+    LinkDonationAlerts.GetDonationAlertsTokenCommand:
+      required:
+      - authorizationCode
+      type: object
+      properties:
+        authorizationCode:
+          type: string
+    LinkKick.LinkKickCommand:
+      required:
+      - authorizationCode
+      - codeVerifier
+      type: object
+      properties:
+        authorizationCode:
+          type: string
+        codeVerifier:
+          type: string
+    LinkTwitch.GetTwitchTokenCommand:
+      required:
+      - authorizationCode
+      type: object
+      properties:
+        authorizationCode:
+          type: string
+    LinkVklive.GetVKLiveTokenCommand:
       required:
       - authorizationCode
       type: object
