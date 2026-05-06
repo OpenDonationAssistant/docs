@@ -101,11 +101,11 @@ paths:
         required: true
       responses:
         "200":
-          description: printCsv 200 response
+          description: Successfully ordered the print
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HttpResponse_PrintCsv.PrintCsvResponse_"
+                $ref: "#/components/schemas/PrintCsv.PrintCsvResponse"
   /history/commands/repeat-alert:
     post:
       summary: Repeat an alert
@@ -636,39 +636,6 @@ components:
           contentType:
             type: string
             nullable: true
-    HttpMessage_PrintCsv.PrintCsvResponse_:
-      required:
-      - attributes
-      - body
-      - characterEncoding
-      - contentType
-      - headers
-      - locale
-      type: object
-      allOf:
-      - $ref: "#/components/schemas/MutableAttributeHolder"
-      - $ref: "#/components/schemas/AttributeHolder"
-      - type: object
-        properties:
-          headers:
-            $ref: "#/components/schemas/HttpHeaders"
-          attributes:
-            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
-          body:
-            $ref: "#/components/schemas/PrintCsv.PrintCsvResponse"
-          bodyWriter:
-            nullable: true
-            allOf:
-            - $ref: "#/components/schemas/MessageBodyWriter_PrintCsv.PrintCsvResponse_"
-          characterEncoding:
-            type: string
-          locale:
-            type: string
-          contentLength:
-            type: integer
-            format: int64
-          contentType:
-            $ref: "#/components/schemas/MediaType"
     HttpMessage_Void_:
       required:
       - attributes
@@ -702,22 +669,6 @@ components:
             format: int64
           contentType:
             $ref: "#/components/schemas/MediaType"
-    HttpResponse_PrintCsv.PrintCsvResponse_:
-      required:
-      - attributes
-      type: object
-      allOf:
-      - $ref: "#/components/schemas/HttpMessage_PrintCsv.PrintCsvResponse_"
-      - $ref: "#/components/schemas/MutableAttributeHolder"
-      - $ref: "#/components/schemas/AttributeHolder"
-      - type: object
-        properties:
-          attributes:
-            $ref: "#/components/schemas/MutableConvertibleValues_Object_"
-          status:
-            $ref: "#/components/schemas/HttpStatus"
-          cookies:
-            $ref: "#/components/schemas/Cookies"
     HttpResponse_Void_:
       required:
       - attributes
@@ -836,11 +787,6 @@ components:
           type: string
           nullable: true
         textBased:
-          type: boolean
-    MessageBodyWriter_PrintCsv.PrintCsvResponse_:
-      type: object
-      properties:
-        blocking:
           type: boolean
     MessageBodyWriter_Void_:
       type: object
