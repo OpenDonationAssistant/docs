@@ -85,7 +85,7 @@ paths:
                 $ref: "#/components/schemas/HttpResponse_Void_"
   /recipients/commands/link-donationalerts:
     post:
-      operationId: getDonationAlertsToken
+      operationId: linkDonationAlerts
       requestBody:
         content:
           application/json:
@@ -94,14 +94,14 @@ paths:
         required: true
       responses:
         "200":
-          description: getDonationAlertsToken 200 response
+          description: linkDonationAlerts 200 response
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/HttpResponse_Void_"
   /recipients/commands/link-kick:
     post:
-      operationId: linkDiscord_1
+      operationId: linkKick
       requestBody:
         content:
           application/json:
@@ -110,7 +110,7 @@ paths:
         required: true
       responses:
         "200":
-          description: linkDiscord_1 200 response
+          description: linkKick 200 response
           content:
             application/json:
               schema:
@@ -133,7 +133,7 @@ paths:
                 $ref: "#/components/schemas/HttpResponse_Void_"
   /recipients/commands/link-vklive:
     post:
-      operationId: getVKLiveToken
+      operationId: linkVKlive
       requestBody:
         content:
           application/json:
@@ -142,7 +142,7 @@ paths:
         required: true
       responses:
         "200":
-          description: getVKLiveToken 200 response
+          description: linkVKlive 200 response
           content:
             application/json:
               schema:
