@@ -197,6 +197,24 @@ paths:
       responses:
         "200":
           description: deleteToken 200 response
+  /recipients/tokens/get-access-token:
+    post:
+      operationId: getAccessToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetAccessToken.GetAccessTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: Fresh Access Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAccessToken.AccessToken"
+        "401":
+          description: Unauthorized or not found
   /recipients/tokens/get-twitch-access-token:
     post:
       operationId: getTwitchAccessToken
@@ -431,6 +449,20 @@ components:
       type: object
       properties:
         refreshToken:
+          type: string
+    GetAccessToken.AccessToken:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+    GetAccessToken.GetAccessTokenCommand:
+      required:
+      - refreshTokenId
+      type: object
+      properties:
+        refreshTokenId:
           type: string
     GetTwitchAccessToken.AccessToken:
       required:
