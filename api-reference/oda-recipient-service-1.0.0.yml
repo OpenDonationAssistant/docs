@@ -197,6 +197,10 @@ paths:
       responses:
         "200":
           description: deleteToken 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
   /recipients/tokens/get-access-token:
     post:
       operationId: getAccessToken
