@@ -105,10 +105,16 @@ paths:
       - Video
       summary: List authenticated user's videos
       description: Returns a list of ready videos for the authenticated recipient
-      operationId: list
+      operationId: listHandled
+      parameters:
+      - name: page
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
       responses:
         "200":
-          description: List of user's videos
+          description: List of user's handled videos
           content:
             application/json:
               schema:
@@ -130,6 +136,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HttpResponse_PrepareVideo.PrepareVideoResponse_"
+  /media/video/count:
+    get:
+      tags:
+      - Video
+      summary: Count ready videos for recipient
+      description: Returns the number of ready videos for a given recipient ID
+      operationId: countReadyVideos
+      parameters:
+      - name: recipientId
+        in: query
+        description: Recipient ID to count ready videos for
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Count of ready videos
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+                allOf: []
+                anyOf: []
+                oneOf: []
   /media/video/{ids}:
     get:
       tags:
@@ -2063,6 +2094,8 @@ components:
             description: "Video statistics (views, likes, etc.)"
       description: YouTube video data
     VideoData:
+      required:
+      - system
       type: object
       properties:
         id:
@@ -2103,6 +2136,8 @@ components:
           type: string
           description: Payment ID associated with this video
           nullable: true
+        system:
+          type: string
       description: Video data entity
     Void:
       type: object
