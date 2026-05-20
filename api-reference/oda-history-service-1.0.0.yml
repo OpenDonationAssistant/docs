@@ -123,7 +123,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HttpResponse_Void_"
+                $ref: "#/components/schemas/Void"
         "404":
           description: History item not found
   /history/csv/{id}:
