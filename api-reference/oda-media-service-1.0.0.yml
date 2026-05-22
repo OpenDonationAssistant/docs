@@ -105,16 +105,10 @@ paths:
       - Video
       summary: List authenticated user's videos
       description: Returns a list of ready videos for the authenticated recipient
-      operationId: listHandled
-      parameters:
-      - name: page
-        in: query
-        required: true
-        schema:
-          $ref: "#/components/schemas/Pageable"
+      operationId: list
       responses:
         "200":
-          description: List of user's handled videos
+          description: List of user's videos
           content:
             application/json:
               schema:
@@ -161,6 +155,26 @@ paths:
                 allOf: []
                 anyOf: []
                 oneOf: []
+  /media/video/handled:
+    get:
+      tags:
+      - Video
+      operationId: listHandled
+      parameters:
+      - name: page
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: List of user's handled videos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoData"
+        "401":
+          description: Unauthorized - authentication required
   /media/video/{ids}:
     get:
       tags:
