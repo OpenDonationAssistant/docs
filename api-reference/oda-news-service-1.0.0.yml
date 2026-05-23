@@ -41,6 +41,7 @@ paths:
       - name: pageable
         in: query
         required: true
+        explode: false
         schema:
           $ref: "#/components/schemas/Pageable"
       responses:
@@ -50,7 +51,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Page_NewsDto_"
-  /news/commands/create:
+  /news/commands/add-news:
     post:
       operationId: addNews
       requestBody:
@@ -88,8 +89,8 @@ components:
   schemas:
     AddNews.AddNewsCommand:
       required:
-      - date
       - description
+      - global
       - title
       type: object
       properties:
@@ -97,11 +98,11 @@ components:
           type: string
         description:
           type: string
-        date:
-          type: string
         demoUrl:
           type: string
           nullable: true
+        global:
+          type: boolean
     CreateFeedbackCommand:
       required:
       - rating
@@ -137,6 +138,9 @@ components:
           type: string
           nullable: true
     Page_NewsDto_:
+      required:
+      - totalPages
+      - totalSize
       type: object
       allOf:
       - $ref: "#/components/schemas/Slice_NewsDto_"
@@ -149,13 +153,15 @@ components:
             type: integer
             format: int32
     Pageable:
+      required:
+      - mode
+      - number
+      - size
+      - sort
       type: object
       allOf:
       - $ref: "#/components/schemas/Sort"
-      - required:
-        - size
-        - sort
-        type: object
+      - type: object
         properties:
           number:
             type: integer
@@ -176,7 +182,12 @@ components:
     Slice_NewsDto_:
       required:
       - content
+      - empty
+      - numberOfElements
+      - offset
+      - pageNumber
       - pageable
+      - size
       type: object
       properties:
         content:
@@ -210,6 +221,7 @@ components:
             $ref: "#/components/schemas/Sort.Order"
     Sort.Order:
       required:
+      - ascending
       - direction
       - ignoreCase
       - property
