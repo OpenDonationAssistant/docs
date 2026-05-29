@@ -1,0 +1,4 @@
+openapi: 3.0.1
+info:
+  title: oda-kick-service
+  version: 1.0.0
