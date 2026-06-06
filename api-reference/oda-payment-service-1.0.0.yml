@@ -381,6 +381,7 @@ components:
       - gatewayId
       - id
       - secret
+      - settings
       - token
       - type
       type: object
@@ -397,6 +398,10 @@ components:
           type: string
         type:
           type: string
+        settings:
+          type: object
+          additionalProperties:
+            type: string
         enabled:
           type: boolean
     ToggleGateway.ToggleGatewayCommand:
