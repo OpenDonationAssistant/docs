@@ -1,0 +1,517 @@
+---
+title: "How to Add a New Widget"
+---
+
+# How to Add a New Widget
+
+This guide walks through adding a minimal widget with custom settings, following the same architecture as `DonatonWidget`, `DonationTimer`, `ReelWidget`, and others in this project.
+
+---
+
+## Overview — Files You Need
+
+| # | File | Purpose |
+| --- | --- | --- |
+| 1 | `src/pages/MyWidget/MyWidgetSettings.tsx` | Settings class — defines properties (what users configure) |
+| 2 | `src/pages/MyWidget/MyWidget.tsx` | Widget component — the visual output rendered in OBS |
+| 3 | `src/pages/MyWidget/MyWidgetPage.tsx` | Page component — React Router entry point |
+| 4 | `src/pages/MyWidget/MyWidget.module.css` | Scoped CSS styles |
+| 5 | `src/types/Widget.tsx` | Register widget in `WIDGET_TYPES` |
+| 6 | `src/index.tsx` | Add route for the widget page |
+
+Optionally, if your widget needs runtime data (WebSocket subscriptions, API calls):
+
+| 7 | `src/pages/MyWidget/MyWidgetStore.ts` | Real store — connects to backend | | 8 | `src/pages/MyWidget/MyWidgetDemoStore.ts` | Demo store — used in settings preview |
+
+There is **no other global registration** needed. Everything is wired through `WIDGET_TYPES` and the router.
+
+---
+
+## Step 1 — Settings Class (`MyWidgetSettings.tsx`)
+
+The settings class defines every user-configurable property of the widget. It extends `AbstractWidgetSettings` and organises properties into **sections** (tabs in the UI).
+
+**Location:** `src/pages/MyWidget/MyWidgetSettings.tsx`
+
+```typescript
+import { ReactNode } from "react";
+import { AbstractWidgetSettings } from "../../components/ConfigurationPage/widgetsettings/AbstractWidgetSettings";
+import { TextProperty } from "../../components/ConfigurationPage/widgetproperties/TextProperty";
+import { BooleanProperty } from "../../components/ConfigurationPage/widgetproperties/BooleanProperty";
+import { NumberProperty } from "../../components/ConfigurationPage/widgetproperties/NumberProperty";
+import { ColorProperty, ColorPropertyTarget } from "../../components/ConfigurationPage/widgetproperties/ColorProperty";
+import { BorderProperty } from "../../components/ConfigurationPage/widgetproperties/BorderProperty";
+import { PaddingProperty } from "../../components/ConfigurationPage/widgetproperties/PaddingProperty";
+import { RoundingProperty } from "../../components/ConfigurationPage/widgetproperties/RoundingProperty";
+import { BoxShadowProperty } from "../../components/ConfigurationPage/widgetproperties/BoxShadowProperty";
+import { BackgroundImageProperty } from "../../components/ConfigurationPage/widgetproperties/BackgroundImageProperty";
+import { AnimatedFontProperty } from "../../components/ConfigurationPage/widgetproperties/AnimatedFontProperty";
+// Import your widget for the live preview (demo):
+import { MyWidget } from "./MyWidget";
+import { Flex } from "antd";
+import { CloseOverlayButton } from "../../components/Overlay/Overlay";
+import classes from "../../components/ConfigurationPage/widgetsettings/AbstractWidgetSettings.module.css";
+
+export class MyWidgetSettings extends AbstractWidgetSettings {
+  constructor() {
+    super({ sections: [] });
+
+    // ── General settings tab ──────────────────────────────────
+    this.addSection({
+      key: "general",
+      title: "Общие",             // shown as tab title (can be i18n key)
+      properties: [
+        new TextProperty({
+          name: "title",
+          value: "Привет, мир!",  // default value
+          displayName: "Заголовок",
+          help: "Текст, который будет отображаться",
+        }),
+        new BooleanProperty({
+          name: "showIcon",
+          value: true,
+          displayName: "Показывать иконку",
+        }),
+        new NumberProperty({
+          name: "count",
+          value: 42,
+          displayName: "Количество",
+          addon: "шт",            // unit suffix shown next to input
+        }),
+        new AnimatedFontProperty({
+          name: "titleFont",
+          // value is optional — its own defaults will be used
+        }),
+      ],
+    });
+
+    // ── Style settings tab ────────────────────────────────────
+    this.addSection({
+      key: "style",
+      title: "Стиль",
+      properties: [
+        new ColorProperty({
+          name: "backgroundColor",
+          displayName: "Цвет фона",
+          target: ColorPropertyTarget.BACKGROUND,
+          value: {
+            angle: 0,
+            colors: [{ color: "rgba(0, 0, 0, 0)" }],
+            gradient: false,
+            repeating: false,
+            gradientType: 0,
+          },
+        }),
+        new BackgroundImageProperty({ name: "backgroundImage" }),
+        new BorderProperty({ name: "border" }),
+        new PaddingProperty({ name: "padding" }),
+        new RoundingProperty({ name: "rounding" }),
+        new BoxShadowProperty({ name: "shadow" }),
+      ],
+    });
+  }
+
+  // ── Typed property getters ──────────────────────────────────
+  // These expose settings to the widget component with proper types.
+
+  public get title(): string {
+    return this.get("title")?.value ?? "Привет, мир!";
+  }
+
+  public get showIcon(): boolean {
+    return (this.get("showIcon") as BooleanProperty)?.value ?? true;
+  }
+
+  public get count(): number {
+    return (this.get("count") as NumberProperty)?.value ?? 42;
+  }
+
+  public get titleFontProperty(): AnimatedFontProperty {
+    return (this.get("titleFont") as AnimatedFontProperty)
+      ?? new AnimatedFontProperty({ name: "titleFont" });
+  }
+
+  public get backgroundColorProperty(): ColorProperty {
+    return (this.get("backgroundColor") as ColorProperty)
+      ?? new ColorProperty({ name: "backgroundColor", displayName: "Цвет фона", target: ColorPropertyTarget.BACKGROUND });
+  }
+
+  public get borderProperty(): BorderProperty {
+    return (this.get("border") as BorderProperty)
+      ?? new BorderProperty({ name: "border" });
+  }
+
+  public get paddingProperty(): PaddingProperty {
+    return (this.get("padding") as PaddingProperty)
+      ?? new PaddingProperty({ name: "padding" });
+  }
+
+  public get roundingProperty(): RoundingProperty {
+    return (this.get("rounding") as RoundingProperty)
+      ?? new RoundingProperty({ name: "rounding" });
+  }
+
+  public get shadowProperty(): BoxShadowProperty {
+    return (this.get("shadow") as BoxShadowProperty)
+      ?? new BoxShadowProperty({ name: "shadow" });
+  }
+
+  public get backgroundImageProperty(): BackgroundImageProperty {
+    return (this.get("backgroundImage") as BackgroundImageProperty)
+      ?? new BackgroundImageProperty({ name: "backgroundImage" });
+  }
+
+  // ── Help panel (shown when user clicks ?) ───────────────────
+  public help(): ReactNode {
+    return (
+      <>
+        <Flex align="center" justify="space-between">
+          <h3 className={`${classes.helptitle}`}>Мой виджет</h3>
+          <CloseOverlayButton />
+        </Flex>
+        <div className={`${classes.helpdescription}`}>
+          Описание вашего виджета — что он делает, для чего нужен.
+        </div>
+        <h3 className={`${classes.helptitle}`}>Как подключить</h3>
+        <div className={`${classes.helpdescription}`}>
+          <ul>
+            <li>В меню виджета скопировать ссылку.</li>
+            <li>Вставить как Browser Source в OBS.</li>
+          </ul>
+        </div>
+      </>
+    );
+  }
+
+  // ── Live preview (shown in settings panel) ──────────────────
+  public hasDemo(): boolean {
+    return true;
+  }
+
+  public demo(): ReactNode {
+    return <MyWidget settings={this} />;
+  }
+}
+```
+
+### Available Property Types
+
+| Class | Value Type | Description |
+| --- | --- | --- |
+| `TextProperty` | `string` | Multi-line text area |
+| `BooleanProperty` | `boolean` | Toggle switch |
+| `NumberProperty` | `number` | Number input with optional `addon` suffix |
+| `ColorProperty` | `ColorPropertyValue` | Color picker (solid or gradient) |
+| `AnimatedFontProperty` | `object` | Full font \+ animation editor |
+| `BorderProperty` | `object` | Border width/style/colour |
+| `PaddingProperty` | `object` | Padding values |
+| `RoundingProperty` | `object` | Border radius |
+| `BoxShadowProperty` | `object` | Drop shadow |
+| `BackgroundImageProperty` | `object` | Image upload |
+| `BlurProperty` | `object` | Background blur |
+| `AlignmentProperty` | `object` | Text alignment |
+| `DateTimeProperty` | `object` | Date/time picker |
+| `SingleChoiceProperty` | `string` | Dropdown selector |
+| `DurationProperty` | `object` | Duration selector |
+| `VolumeProperty` | `number` | Volume slider |
+
+### Property Constructor Options
+
+Every property accepts at minimum:
+
+- `name` — unique identifier (used for JSON serialisation)
+- `value` — default value
+- `displayName` — label shown in UI (can be an i18n key)
+- `help` — optional help tooltip
+
+---
+
+## Step 2 — Widget Component (`MyWidget.tsx`)
+
+The widget component is the visual element rendered in OBS. It receives typed settings as a prop and uses MobX `observer` for reactivity.
+
+**Location:** `src/pages/MyWidget/MyWidget.tsx`
+
+```typescript
+import { CSSProperties, useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { log } from "../../logging";
+import { TextRenderer } from "../../components/Renderer/TextRenderer";
+import { MyWidgetSettings } from "./MyWidgetSettings";
+import classes from "./MyWidget.module.css";
+
+export const MyWidget = observer(
+  ({ settings }: { settings: MyWidgetSettings }) => {
+    const [style, setStyle] = useState<CSSProperties>({});
+
+    // ── Compute combined CSS from style properties ────────────
+    useEffect(() => {
+      settings.backgroundImageProperty.calcCss().then((css) => {
+        setStyle({
+          ...settings.borderProperty.calcCss(),
+          ...settings.backgroundColorProperty.calcCss(),
+          ...settings.paddingProperty.calcCss(),
+          ...settings.roundingProperty.calcCss(),
+          ...settings.shadowProperty.calcCss(),
+          ...css,
+        });
+      });
+    }, [
+      settings.backgroundImageProperty.value,
+      settings.borderProperty.value,
+      settings.paddingProperty.value,
+      settings.roundingProperty.value,
+      settings.shadowProperty.value,
+    ]);
+
+    // ── Render ────────────────────────────────────────────────
+    return (
+      <div className={`${classes.container}`} style={style}>
+        <TextRenderer
+          text={settings.title}
+          font={settings.titleFontProperty}
+        />
+        <div className={`${classes.count}`}>
+          {settings.showIcon && <span>🎯</span>}
+          Count: {settings.count}
+        </div>
+      </div>
+    );
+  },
+);
+```
+
+> **Note:** The widget component itself should be a **pure UI** concern — it receives settings and optionally a store, and renders. Business logic (WebSocket subscriptions, timers, API calls) lives in the settings class or a separate store.
+
+---
+
+## Step 3 — CSS Module (`MyWidget.module.css`)
+
+**Location:** `src/pages/MyWidget/MyWidget.module.css`
+
+```css
+.container {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.count {
+  margin-top: 8px;
+  font-size: 18px;
+}
+```
+
+---
+
+## Step 4 — Widget Page (`MyWidgetPage.tsx`)
+
+The page component is the React Router route target. It loads settings from the API, deserialises them, and renders the widget inside `<WidgetWrapper>`.
+
+**Location:** `src/pages/MyWidget/MyWidgetPage.tsx`
+
+```typescript
+import WidgetWrapper from "../../WidgetWrapper";
+import { MyWidget } from "./MyWidget";
+import { useLoaderData } from "react-router";
+import { WidgetData } from "../../types/WidgetData";
+import { Widget } from "../../types/Widget";
+import { MyWidgetSettings } from "./MyWidgetSettings";
+
+export default function MyWidgetPage() {
+  const { settings } = useLoaderData() as WidgetData;
+
+  return (
+    <WidgetWrapper>
+      <MyWidget
+        settings={Widget.configFromJson(settings) as MyWidgetSettings}
+      />
+    </WidgetWrapper>
+  );
+}
+```
+
+For widgets that need a **store** (e.g., WebSocket subscriptions), add store initialisation:
+
+```typescript
+import { useState } from "react";
+import { DefaultMyWidgetStore } from "./MyWidgetStore";
+
+export default function MyWidgetPage() {
+  const { settings, widgetId, conf } = useLoaderData() as WidgetData;
+  const widgetSettings = Widget.configFromJson(settings) as MyWidgetSettings;
+  const [store] = useState(() => new DefaultMyWidgetStore(widgetId, conf));
+
+  return (
+    <WidgetWrapper>
+      <MyWidget settings={widgetSettings} store={store} />
+    </WidgetWrapper>
+  );
+}
+```
+
+---
+
+## Step 5 — Register in `Widget.tsx`
+
+Add your widget to the `WIDGET_TYPES` array so it appears in the UI.
+
+**File:** `src/types/Widget.tsx`
+
+First, import your settings class at the top:
+
+```typescript
+import { MyWidgetSettings } from "../pages/MyWidget/MyWidgetSettings";
+```
+
+Then add an entry to the `WIDGET_TYPES` array (insert it anywhere, alphabetical order is optional):
+
+```typescript
+{
+  name: "my-widget",                    // URL-safe identifier
+  title: "Мой виджет",                  // Display name in the UI
+  icon: <span className="material-symbols-sharp">widgets</span>,
+  category: "onscreen",                 // "onscreen" | "media" | "internal"
+  preview: "https://api.oda.digital/assets/...",
+  description: "Краткое описание виджета.",
+  create: () => new MyWidgetSettings(),
+},
+```
+
+> **Important:** The `name` field (`"my-widget"`) is used as the URL path segment and as the `type` field in the API. Choose something short and unique.
+
+---
+
+## Step 6 — Add Route in `index.tsx`
+
+Add a new route so the widget can be served at `/my-widget/:widgetId`.
+
+**File:** `src/index.tsx`
+
+First, import your page component at the top:
+
+```typescript
+import MyWidgetPage from "./pages/MyWidget/MyWidgetPage";
+```
+
+Then add a route **inside** the `createBrowserRouter` array:
+
+```typescript
+{
+  path: "/my-widget/:widgetId",
+  element: <MyWidgetPage />,
+  loader: widgetSettingsLoader,
+},
+```
+
+The route path **must** match the `name` you used in `WIDGET_TYPES`.
+
+---
+
+## Step 7 (Optional) — Store Class
+
+If your widget needs real-time data via WebSocket or API calls, create a MobX store.
+
+### Real Store — `MyWidgetStore.ts`
+
+```typescript
+import { makeAutoObservable } from "mobx";
+import { subscribe } from "../../socket";
+
+export interface MyWidgetStore {
+  data: string | null;
+}
+
+export class DefaultMyWidgetStore implements MyWidgetStore {
+  private _data: string | null = null;
+
+  constructor(widgetId: string, conf: any) {
+    makeAutoObservable(this);
+
+    if (conf?.topic?.events) {
+      subscribe(widgetId, conf.topic.events, (message) => {
+        this._data = message.body;
+        message.ack();
+      });
+    }
+  }
+
+  public get data(): string | null {
+    return this._data;
+  }
+}
+```
+
+### Demo Store — `MyWidgetDemoStore.ts`
+
+For the settings preview (so the widget appears alive in config):
+
+```typescript
+import { MyWidgetStore } from "./MyWidgetStore";
+
+export class MyWidgetDemoStore implements MyWidgetStore {
+  data = "Demo data";
+}
+```
+
+Use the demo store in the settings class:
+
+```typescript
+// In MyWidgetSettings.demo():
+public demo(): ReactNode {
+  return <MyWidget settings={this} store={new MyWidgetDemoStore()} />;
+}
+```
+
+---
+
+## Complete File Checklist
+
+When you are done, you should have these files:
+
+```text
+src/pages/MyWidget/
+  ├── MyWidget.tsx              # Widget visual component
+  ├── MyWidgetPage.tsx          # Route page
+  ├── MyWidgetSettings.tsx      # Settings class
+  ├── MyWidget.module.css       # Widget styles
+  ├── MyWidgetStore.ts          # (optional) real store
+  └── MyWidgetDemoStore.ts      # (optional) demo store
+```
+
+And these files **modified**:
+
+```text
+src/types/Widget.tsx            # Added WIDGET_TYPES entry + import
+src/index.tsx                   # Added route + import
+```
+
+---
+
+## Anatomy of a Minimal Widget (DonatonWidget Reference)
+
+The simplest real widget in this codebase is `DonatonWidget`. Here's how it maps to this guide:
+
+| Concept | DonatonWidget Implementation |
+| --- | --- |
+| Settings class | `DonatonWidgetSettings` (3 text/font properties \+ 6 style properties) |
+| Widget component | `DonatonWidget` (20-line `observer` component, pure render) |
+| Page | `DonatonPage` (~15 lines, just loads settings and renders) |
+| Store | None — timer logic is inline via `useEffect` |
+| WIDGET\_TYPES entry | `{ name: "donaton", … }` |
+| Route | `{ path: "/donaton/:widgetId", … }` |
+
+---
+
+## Key Architecture Rules
+
+1. **Settings are reactive** — properties use MobX `observable`. Reading `.value` in an `observer` component automatically re-renders on change.
+2. **CSS modules** — every widget gets its own `.module.css` file. Avoid global styles.
+3. **No manual serialisation** — `AbstractWidgetSettings.prepareConfig()` collects all properties by name/value automatically. `Widget.configFromJson()` restores them.
+4. **`WidgetWrapper` provides the shell** — it sets `overflow: hidden`, transparent background, and wires WebSocket command listeners for OBS refresh. Wrap every widget page with it.
+5. **i18n** — `displayName` and `title` fields can be either Russian strings directly or i18n keys for translation (e.g., `"widget-reel-required-amount"`).
+6. **Demo/preview** — implement `hasDemo() → true` and `demo() → ReactNode` to show a live preview inside the settings panel. Use a `DemoStore` if the widget normally requires backend data.

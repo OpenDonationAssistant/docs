@@ -13,7 +13,8 @@
         "tab": "Getting Started",
         "pages": [
           "auth",
-          "stomp-connect"
+          "stomp-connect",
+          "how-to-create-a-new-widget"
         ]
       },
       {
