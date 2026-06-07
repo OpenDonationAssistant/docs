@@ -2,13 +2,13 @@
 title: "How to Add a New Widget"
 ---
 
-# How to Add a New Widget
-
 This guide walks through adding a minimal widget with custom settings, following the same architecture as `DonatonWidget`, `DonationTimer`, `ReelWidget`, and others in this project.
+
+All widgets are located in a single repository on [GitHub](https://github.com/opendonationassistant/oda-widget-page).
 
 ---
 
-## Overview — Files You Need
+## Files You Need
 
 | # | File | Purpose |
 | --- | --- | --- |
@@ -18,10 +18,8 @@ This guide walks through adding a minimal widget with custom settings, following
 | 4 | `src/pages/MyWidget/MyWidget.module.css` | Scoped CSS styles |
 | 5 | `src/types/Widget.tsx` | Register widget in `WIDGET_TYPES` |
 | 6 | `src/index.tsx` | Add route for the widget page |
-
-Optionally, if your widget needs runtime data (WebSocket subscriptions, API calls):
-
-| 7 | `src/pages/MyWidget/MyWidgetStore.ts` | Real store — connects to backend | | 8 | `src/pages/MyWidget/MyWidgetDemoStore.ts` | Demo store — used in settings preview |
+| 7 | `src/pages/MyWidget/MyWidgetStore.ts` | (Optional) Real store — connects to backend |
+| 8 | `src/pages/MyWidget/MyWidgetDemoStore.ts` | (Optional) Demo store — used in settings preview |
 
 There is **no other global registration** needed. Everything is wired through `WIDGET_TYPES` and the router.
 
