@@ -10,10 +10,7 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              type: object
-              properties:
-                event:
-                  $ref: "#/components/schemas/VkWebhook.Event"
+              $ref: "#/components/schemas/VkWebhook.Event"
         required: true
       responses:
         "200":
