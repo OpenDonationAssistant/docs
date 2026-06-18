@@ -26,22 +26,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HttpResponse_LinkPayment.LinkPaymentResponse_"
-  /commands/media/markAllListened:
-    post:
-      operationId: markAllListened
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/MarkAllListened.MarkAllListenedCommand"
-        required: true
-      responses:
-        "200":
-          description: markAllListened 200 response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HttpResponse_Void_"
   /media/available:
     get:
       tags:
@@ -78,6 +62,22 @@ paths:
                 $ref: "#/components/schemas/Video"
         "500":
           description: Internal server error or video not found
+  /media/commands/mark-all-listened:
+    post:
+      operationId: markAllListened
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkAllListened.MarkAllListenedCommand"
+        required: true
+      responses:
+        "200":
+          description: markAllListened 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpResponse_Void_"
   /media/playlists/{playlistId}:
     get:
       tags:
