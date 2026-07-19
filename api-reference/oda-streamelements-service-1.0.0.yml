@@ -34,6 +34,7 @@ components:
           type: string
     StreamElementsSessionView.Data:
       required:
+      - follower-latest
       - tip-goal
       - tip-latest
       type: object
@@ -42,6 +43,15 @@ components:
           $ref: "#/components/schemas/StreamElementsSessionView.Tip"
         tip-goal:
           $ref: "#/components/schemas/StreamElementsSessionView.Tip"
+        follower-latest:
+          $ref: "#/components/schemas/StreamElementsSessionView.Follower"
+    StreamElementsSessionView.Follower:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
     StreamElementsSessionView.Session:
       required:
       - data
