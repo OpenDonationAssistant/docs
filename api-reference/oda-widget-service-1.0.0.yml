@@ -37,7 +37,7 @@ paths:
     post:
       summary: Create template
       description: Creates a new template
-      operationId: execute
+      operationId: createTemplate
       requestBody:
         content:
           application/json:
