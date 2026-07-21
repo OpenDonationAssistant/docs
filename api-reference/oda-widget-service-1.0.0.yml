@@ -59,14 +59,16 @@ paths:
       description: Lists all widgets for the authenticated user
       operationId: list
       responses:
+        "401":
+          description: Unauthorized
         "200":
-          description: Widgets retrieved successfully
+          description: list 200 response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WidgetDto"
-        "401":
-          description: Unauthorized
+                type: array
+                items:
+                  $ref: "#/components/schemas/WidgetDto"
   /widgets/commands/add:
     post:
       summary: Add widget
