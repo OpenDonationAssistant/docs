@@ -90,6 +90,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HttpResponse_Void_"
+  /history/commands/delete-item:
+    post:
+      summary: Delete a history item
+      description: Soft-deletes a history item by setting the deleted flag to true
+      operationId: deleteItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteHistoryItemApi.DeleteHistoryItemCommand"
+        required: true
+      responses:
+        "200":
+          description: Successfully deleted the history item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
+        "404":
+          description: History item not found
   /history/commands/print-csv:
     post:
       operationId: printCsv
@@ -436,6 +456,13 @@ components:
             type: array
             items:
               $ref: "#/components/schemas/Cookie"
+    DeleteHistoryItemApi.DeleteHistoryItemCommand:
+      type: object
+      properties:
+        historyItemId:
+          type: string
+          description: ID of the history item to delete
+      description: Command to delete a history item
     DownloadCsv.CsvStatus:
       required:
       - ready
@@ -531,6 +558,9 @@ components:
         levelName:
           type: string
           nullable: true
+        deleted:
+          type: boolean
+          description: Soft-delete flag for history item
       description: History item representing a donation or event
     HistoryItemData.ActionRequest:
       type: object
