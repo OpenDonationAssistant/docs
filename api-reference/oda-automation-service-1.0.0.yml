@@ -1,21 +1,48 @@
 openapi: 3.0.1
 info:
   title: ODA Automation Service
-  description: ODA Automation Service
-  contact:
-    name: stCarolas
-    email: stcarolas@gmail.com
-  license:
-    name: GPL-3.0
-    url: https://www.gnu.org/licenses/gpl-3.0.en.html
   version: 1.0.0
 tags:
 - name: Automation
   description: Automation operations for managing rules and variables
-- name: Automation Commands
-  description: Commands for updating automation state
 paths:
-  /automation/:
+  /alerts:
+    get:
+      summary: List alerts
+      description: Retrieves paginated alerts for the authenticated user with optional
+        filters
+      operationId: listAlerts
+      parameters:
+      - name: after
+        in: query
+        explode: false
+        schema:
+          type: string
+          format: date-time
+          nullable: true
+      - name: before
+        in: query
+        explode: false
+        schema:
+          type: string
+          format: date-time
+          nullable: true
+      - name: pageable
+        in: query
+        required: true
+        explode: false
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: Paginated list of alerts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAlertsApi.GetAlertsApiResponse"
+        "401":
+          description: Unauthorized - user not authenticated
+  /automation:
     get:
       tags:
       - Automation
@@ -34,8 +61,6 @@ paths:
           description: Unauthorized - user not authenticated
   /automation/commands/setstate:
     post:
-      tags:
-      - Automation Commands
       summary: Set automation state
       description: Updates automation variables and rules for the authenticated user
       operationId: setState
@@ -63,9 +88,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf: []
-                anyOf: []
-                oneOf: []
+                type: object
         "401":
           description: Unauthorized - user not authenticated
   /automation/variables:
@@ -81,13 +104,71 @@ paths:
           content:
             application/json:
               schema:
-                allOf: []
-                anyOf: []
-                oneOf: []
+                type: object
         "401":
           description: Unauthorized - user not authenticated
 components:
   schemas:
+    AlertData:
+      required:
+      - createdAt
+      - hidden
+      - id
+      - recipientId
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        nickname:
+          type: string
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        amount:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/Amount"
+        media:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/AlertData.AlertMedia"
+        levelName:
+          type: string
+          nullable: true
+        count:
+          type: integer
+          format: int32
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        hidden:
+          type: boolean
+    AlertData.AlertMedia:
+      required:
+      - url
+      type: object
+      properties:
+        url:
+          type: string
+    Amount:
+      required:
+      - currency
+      - major
+      - minor
+      type: object
+      properties:
+        minor:
+          type: integer
+          format: int32
+        major:
+          type: integer
+          format: int32
+        currency:
+          type: string
     AutomationActionDto:
       required:
       - id
@@ -98,7 +179,8 @@ components:
           type: string
         value:
           type: object
-          additionalProperties: true
+          additionalProperties:
+            type: object
     AutomationDto:
       required:
       - rules
@@ -143,7 +225,8 @@ components:
           type: string
         value:
           type: object
-          additionalProperties: true
+          additionalProperties:
+            type: object
     AutomationVariableDto:
       required:
       - id
@@ -160,6 +243,53 @@ components:
           type: string
         value:
           type: string
+    GetAlertsApi.GetAlertsApiResponse:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Page_AlertData_"
+      - $ref: "#/components/schemas/Slice_AlertData_"
+    Page_AlertData_:
+      required:
+      - totalPages
+      - totalSize
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Slice_AlertData_"
+      - type: object
+        properties:
+          totalSize:
+            type: integer
+            format: int64
+          totalPages:
+            type: integer
+            format: int32
+    Pageable:
+      required:
+      - mode
+      - number
+      - size
+      - sort
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Sort"
+      - type: object
+        properties:
+          number:
+            type: integer
+            format: int32
+          size:
+            type: integer
+            format: int32
+          mode:
+            $ref: "#/components/schemas/Pageable.Mode"
+          sort:
+            $ref: "#/components/schemas/Sort"
+    Pageable.Mode:
+      type: string
+      enum:
+      - CURSOR_NEXT
+      - CURSOR_PREVIOUS
+      - OFFSET
     SetState.SetStateCommand:
       required:
       - rules
@@ -174,3 +304,64 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AutomationVariableDto"
+    Slice_AlertData_:
+      required:
+      - content
+      - empty
+      - numberOfElements
+      - offset
+      - pageNumber
+      - pageable
+      - size
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/AlertData"
+        pageable:
+          $ref: "#/components/schemas/Pageable"
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+    Sort:
+      required:
+      - orderBy
+      type: object
+      properties:
+        orderBy:
+          type: array
+          items:
+            $ref: "#/components/schemas/Sort.Order"
+    Sort.Order:
+      required:
+      - ascending
+      - direction
+      - ignoreCase
+      - property
+      type: object
+      properties:
+        ignoreCase:
+          type: boolean
+        direction:
+          $ref: "#/components/schemas/Sort.Order.Direction"
+        property:
+          type: string
+        ascending:
+          type: boolean
+    Sort.Order.Direction:
+      type: string
+      enum:
+      - ASC
+      - DESC
