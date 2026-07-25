@@ -199,7 +199,7 @@ paths:
                 $ref: "#/components/schemas/GetTwitchAccessToken.AccessToken"
         "401":
           description: Unauthorized or not found
-  /recipients/tokens/settoken:
+  /recipients/tokens/set-token:
     post:
       operationId: setToken
       requestBody:
