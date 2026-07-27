@@ -87,6 +87,18 @@ paths:
       responses:
         "200":
           description: linkDonationAlerts 200 response
+  /recipients/commands/link-goodgame:
+    post:
+      operationId: linkGoodGame
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkGoodGame.GetGoodGameTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: linkGoodGame 200 response
   /recipients/commands/link-kick:
     post:
       operationId: linkKick
@@ -99,6 +111,30 @@ paths:
       responses:
         "200":
           description: linkKick 200 response
+  /recipients/commands/link-streamelements:
+    post:
+      operationId: linkStreamElements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkStreamElements.GetStreamElementsTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: linkStreamElements 200 response
+  /recipients/commands/link-streamlabs:
+    post:
+      operationId: linkStreamlabs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkStreamlabs.GetStreamlabsTokenCommand"
+        required: true
+      responses:
+        "200":
+          description: linkStreamlabs 200 response
   /recipients/commands/link-twitch:
     post:
       operationId: linkTwitch
@@ -157,7 +193,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/TokenController.TokenDto"
-  /recipients/tokens/deletetoken:
+  /recipients/tokens/delete-token:
     post:
       operationId: deleteToken
       requestBody:
@@ -187,18 +223,6 @@ paths:
                 $ref: "#/components/schemas/GetAccessToken.AccessToken"
         "401":
           description: Unauthorized or not found
-  /recipients/tokens/get-twitch-access-token:
-    post:
-      operationId: getTwitchAccessToken
-      responses:
-        "200":
-          description: Twitch access token
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetTwitchAccessToken.AccessToken"
-        "401":
-          description: Unauthorized or not found
   /recipients/tokens/set-token:
     post:
       operationId: setToken
@@ -211,7 +235,7 @@ paths:
       responses:
         "200":
           description: setToken 200 response
-  /recipients/tokens/toggletoken:
+  /recipients/tokens/toggle-token:
     post:
       operationId: toggleToken
       requestBody:
@@ -343,13 +367,6 @@ components:
       properties:
         tokenId:
           type: string
-    GetTwitchAccessToken.AccessToken:
-      required:
-      - token
-      type: object
-      properties:
-        token:
-          type: string
     Info:
       required:
       - id
@@ -374,6 +391,13 @@ components:
       properties:
         authorizationCode:
           type: string
+    LinkGoodGame.GetGoodGameTokenCommand:
+      required:
+      - authorizationCode
+      type: object
+      properties:
+        authorizationCode:
+          type: string
     LinkKick.LinkKickCommand:
       required:
       - authorizationCode
@@ -383,6 +407,20 @@ components:
         authorizationCode:
           type: string
         codeVerifier:
+          type: string
+    LinkStreamElements.GetStreamElementsTokenCommand:
+      required:
+      - authorizationCode
+      type: object
+      properties:
+        authorizationCode:
+          type: string
+    LinkStreamlabs.GetStreamlabsTokenCommand:
+      required:
+      - authorizationCode
+      type: object
+      properties:
+        authorizationCode:
           type: string
     LinkTwitch.GetTwitchTokenCommand:
       required:
