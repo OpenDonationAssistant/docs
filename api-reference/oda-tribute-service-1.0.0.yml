@@ -1,0 +1,44 @@
+openapi: 3.0.1
+info:
+  title: oda-tribute-service
+  version: 1.0.0
+paths:
+  /tribute/webhook/{recipientId}:
+    post:
+      operationId: handleWebhook
+      parameters:
+      - name: recipientId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TributeWebhook.TributePayload"
+        required: true
+      responses:
+        "200":
+          description: handleWebhook 200 response
+components:
+  schemas:
+    TributeWebhook.TributePayload:
+      required:
+      - created_at
+      - name
+      - payload
+      type: object
+      properties:
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        payload:
+          type: object
+          additionalProperties: true
