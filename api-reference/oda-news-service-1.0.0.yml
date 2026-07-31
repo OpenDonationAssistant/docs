@@ -10,6 +10,32 @@ info:
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
   version: 1.0.0
 paths:
+  /advice/commands/add-advice:
+    post:
+      operationId: addAdvice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddAdvice.AddAdviceCommand"
+        required: true
+      responses:
+        "200":
+          description: addAdvice 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdviceDto"
+  /advice/commands/get-random-advice:
+    get:
+      operationId: getRandomAdvice
+      responses:
+        "200":
+          description: getRandomAdvice 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdviceDto"
   /feed/commands/mark-as-read:
     post:
       operationId: markAsRead
@@ -87,6 +113,13 @@ paths:
           description: createFeedback 200 response
 components:
   schemas:
+    AddAdvice.AddAdviceCommand:
+      required:
+      - text
+      type: object
+      properties:
+        text:
+          type: string
     AddNews.AddNewsCommand:
       required:
       - description
@@ -103,6 +136,16 @@ components:
           nullable: true
         global:
           type: boolean
+    AdviceDto:
+      required:
+      - id
+      - text
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
     CreateFeedbackCommand:
       required:
       - rating
