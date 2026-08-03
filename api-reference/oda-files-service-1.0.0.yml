@@ -1,6 +1,9 @@
 openapi: 3.0.1
 info:
-  title: oda-files-service
+  title: ODA Files Service
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
   version: 1.0.0
 paths:
   /catalog:
@@ -38,7 +41,7 @@ paths:
             application/octet-stream:
               schema:
                 type: string
-                format: byte
+                format: binary
     put:
       operationId: put
       parameters:
