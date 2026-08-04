@@ -41,4 +41,5 @@ components:
           nullable: true
         payload:
           type: object
-          additionalProperties: true
+          additionalProperties:
+            type: object
