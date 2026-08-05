@@ -223,6 +223,24 @@ paths:
                 $ref: "#/components/schemas/GetAccessToken.AccessToken"
         "401":
           description: Unauthorized or not found
+  /recipients/tokens/refresh:
+    post:
+      operationId: refresh
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokens.RefreshTokensCommand"
+        required: true
+      responses:
+        "200":
+          description: refresh 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OauthClient.RefreshedTokens"
   /recipients/tokens/set-token:
     post:
       operationId: setToken
@@ -435,6 +453,23 @@ components:
       type: object
       properties:
         authorizationCode:
+          type: string
+    OauthClient.RefreshedTokens:
+      required:
+      - accessToken
+      - refreshToken
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    RefreshTokens.RefreshTokensCommand:
+      required:
+      - system
+      type: object
+      properties:
+        system:
           type: string
     SetToken.SetTokenCommand:
       required:
