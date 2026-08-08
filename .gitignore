@@ -1,0 +1,8 @@
+# Dependencies
+node_modules/
+
+# Generated API client packages
+generated/
+
+# Session/task scratch files
+.tmp/
