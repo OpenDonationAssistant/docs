@@ -1,0 +1,53 @@
+openapi: 3.0.1
+info:
+  title: ODA Paywall Service
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 0.1.0
+paths:
+  /paywall/commands/add-webhook:
+    post:
+      operationId: addWebhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddWebhook.AddWebhookRequest"
+        required: true
+      responses:
+        "200":
+          description: addWebhook 200 response
+  /paywall/webhook/{id}:
+    post:
+      operationId: handleWebhook
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+        required: true
+      responses:
+        "200":
+          description: handleWebhook 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  schemas:
+    AddWebhook.AddWebhookRequest:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
