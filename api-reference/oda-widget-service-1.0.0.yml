@@ -53,6 +53,24 @@ paths:
                 $ref: "#/components/schemas/TemplateDto"
         "401":
           description: Unauthorized
+  /templates/commands/delete-template:
+    post:
+      summary: Delete template
+      description: Deletes a template by id
+      operationId: deleteTemplate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteTemplateApi.DeleteTemplateCommand"
+        required: true
+      responses:
+        "200":
+          description: Template deleted successfully
+        "401":
+          description: Unauthorized
+        "404":
+          description: Template not found
   /widgets:
     get:
       summary: List widgets
@@ -226,6 +244,13 @@ components:
             type: object
             additionalProperties:
               type: object
+    DeleteTemplateApi.DeleteTemplateCommand:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
     ReorderCommand:
       required:
       - ids
