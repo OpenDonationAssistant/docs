@@ -1,0 +1,17 @@
+{
+  "name": "opendonationassistant-client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Generates TypeScript API client npm packages from OpenAPI specs in api-reference/",
+  "scripts": {
+    "generate": "node scripts/generate-clients.mjs",
+    "publish": "node scripts/publish-clients.mjs"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "0.99.0",
+    "axios": "^1.13.4",
+    "typescript": "^5.5.3",
+    "yaml": "^2.5.0"
+  }
+}
