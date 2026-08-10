@@ -15,6 +15,9 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Generate packages
+        run: npm run generate
+
       - name: Install npm package
         run: npm install
         working-directory: "generated/paywall-service"
