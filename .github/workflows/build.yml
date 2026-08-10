@@ -16,7 +16,7 @@ jobs:
           node-version: "24"
 
       - name: Generate packages
-        run: npm run generate
+        run: npm install && npm run generate
 
       - name: Install npm package
         run: npm install
