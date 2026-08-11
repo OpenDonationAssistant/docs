@@ -1,0 +1,328 @@
+openapi: 3.0.1
+info:
+  title: oda-actions-service
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 0.1.0
+paths:
+  /actions:
+    get:
+      summary: Get actions
+      description: Retrieves actions filtered by recipientId and optional parameters
+      operationId: getActions
+      parameters:
+      - name: recipientId
+        in: query
+        description: Owner recipient ID
+        required: true
+        explode: false
+        schema:
+          type: string
+      - name: game
+        in: query
+        description: Filter by game
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      - name: enabled
+        in: query
+        description: Filter by enabled status
+        explode: false
+        schema:
+          type: boolean
+          nullable: true
+      - name: category
+        in: query
+        description: Filter by category
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      - name: provider
+        in: query
+        description: Filter by provider
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      responses:
+        "200":
+          description: Actions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActionControllerApi.ActionDto"
+  /actions/commands/add-actions:
+    post:
+      summary: Add actions
+      description: Add new actions to the system
+      operationId: addAction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddActionApi.AddActionsCommand"
+        required: true
+      responses:
+        "200":
+          description: Actions successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddActionApi.AddActionResult"
+  /actions/commands/delete-actions:
+    post:
+      summary: Delete actions
+      description: "Deletes actions by their IDs, category, or provider"
+      operationId: deleteActions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteActionsApi.DeleteActionsCommand"
+        required: true
+      responses:
+        "200":
+          description: Actions successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteActionsApi.DeleteActionsResult"
+  /actions/commands/disable-actions:
+    post:
+      summary: Disable actions
+      description: "Disables actions by their IDs, category, provider, or game"
+      operationId: disableActions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DisableActionsApi.DisableActionsCommand"
+        required: true
+      responses:
+        "200":
+          description: Actions successfully disabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DisableActionsApi.DisableActionsResult"
+  /actions/commands/enable-actions:
+    post:
+      summary: Enable actions
+      description: "Enables actions by their IDs, category, provider, or game"
+      operationId: enableActions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnableActionsApi.EnableActionsCommand"
+        required: true
+      responses:
+        "200":
+          description: Actions successfully enabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnableActionsApi.EnableActionsResult"
+components:
+  schemas:
+    ActionControllerApi.ActionDto:
+      required:
+      - category
+      - enabled
+      - game
+      - id
+      - name
+      - payload
+      - price
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          $ref: "#/components/schemas/Amount"
+        category:
+          type: string
+        game:
+          type: string
+        enabled:
+          type: boolean
+        payload:
+          type: object
+          additionalProperties:
+            type: object
+    AddActionApi.ActionParameter:
+      required:
+      - displayName
+      - name
+      - type
+      type: object
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        type:
+          type: string
+    AddActionApi.AddActionResult:
+      required:
+      - action
+      - message
+      - success
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        action:
+          $ref: "#/components/schemas/ActionControllerApi.ActionDto"
+    AddActionApi.AddActionsCommand:
+      required:
+      - actions
+      type: object
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AddActionApi.NewAction"
+    AddActionApi.NewAction:
+      required:
+      - category
+      - game
+      - name
+      - parameters
+      - payload
+      - price
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        game:
+          type: string
+        price:
+          $ref: "#/components/schemas/Amount"
+        payload:
+          type: object
+          additionalProperties:
+            type: object
+        parameters:
+          type: array
+          items:
+            $ref: "#/components/schemas/AddActionApi.ActionParameter"
+    Amount:
+      required:
+      - currency
+      - major
+      - minor
+      type: object
+      properties:
+        minor:
+          type: integer
+          format: int32
+        major:
+          type: integer
+          format: int32
+        currency:
+          type: string
+    DeleteActionsApi.DeleteActionsCommand:
+      type: object
+      properties:
+        category:
+          type: string
+          nullable: true
+        provider:
+          type: string
+          nullable: true
+        ids:
+          type: array
+          nullable: true
+          items:
+            type: string
+    DeleteActionsApi.DeleteActionsResult:
+      required:
+      - ids
+      - message
+      - success
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
+    DisableActionsApi.DisableActionsCommand:
+      type: object
+      properties:
+        category:
+          type: string
+          nullable: true
+        provider:
+          type: string
+          nullable: true
+        game:
+          type: string
+          nullable: true
+        ids:
+          type: array
+          nullable: true
+          items:
+            type: string
+    DisableActionsApi.DisableActionsResult:
+      required:
+      - ids
+      - message
+      - success
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
+    EnableActionsApi.EnableActionsCommand:
+      type: object
+      properties:
+        category:
+          type: string
+          nullable: true
+        provider:
+          type: string
+          nullable: true
+        game:
+          type: string
+          nullable: true
+        ids:
+          type: array
+          nullable: true
+          items:
+            type: string
+    EnableActionsApi.EnableActionsResult:
+      required:
+      - ids
+      - message
+      - success
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
