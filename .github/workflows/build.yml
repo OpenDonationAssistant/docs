@@ -26,7 +26,6 @@ jobs:
 
       - uses: JS-DevTools/npm-publish@v3
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: ghcr.io
+          token: ${{ secrets.GITHUB_TOKEN }}
+          registry: "https://npm.pkg.github.com"
           package: "./generated/paywall-service"
