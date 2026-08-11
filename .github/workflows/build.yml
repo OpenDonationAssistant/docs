@@ -5,6 +5,9 @@ name: Build npm packages
 on:
   workflow_dispatch:
 
+permissions:
+  packages: write
+
 jobs:
   update-version:
     runs-on: ubuntu-latest
