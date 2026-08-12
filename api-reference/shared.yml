@@ -1,0 +1,23 @@
+openapi: 3.0.1
+info:
+  title: ODA Shared API Models
+  version: 1.0.0
+components:
+  schemas:
+    Amount:
+      required:
+      - currency
+      - major
+      - minor
+      type: object
+      properties:
+        minor:
+          type: integer
+          format: int32
+        major:
+          type: integer
+          format: int32
+        currency:
+          type: string
+    Void:
+      type: object
