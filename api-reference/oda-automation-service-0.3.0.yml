@@ -1,0 +1,370 @@
+openapi: 3.0.1
+info:
+  title: ODA Automation Service
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 0.3.0
+tags:
+- name: Automation
+  description: Automation operations for managing rules and variables
+paths:
+  /alerts:
+    get:
+      summary: List alerts
+      description: Retrieves paginated alerts for the authenticated user with optional
+        filters
+      operationId: listAlerts
+      parameters:
+      - name: after
+        in: query
+        explode: false
+        schema:
+          type: string
+          format: date-time
+          nullable: true
+      - name: before
+        in: query
+        explode: false
+        schema:
+          type: string
+          format: date-time
+          nullable: true
+      - name: pageable
+        in: query
+        required: true
+        explode: false
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: Paginated list of alerts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAlertsApi.GetAlertsApiResponse"
+        "401":
+          description: Unauthorized - user not authenticated
+  /automation:
+    get:
+      tags:
+      - Automation
+      summary: Get automation state
+      description: Retrieves the complete automation state including all rules and
+        variables
+      operationId: getState
+      responses:
+        "200":
+          description: Complete automation state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutomationDto"
+        "401":
+          description: Unauthorized - user not authenticated
+  /automation/commands/setstate:
+    post:
+      summary: Set automation state
+      description: Updates automation variables and rules for the authenticated user
+      operationId: setState
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetState.SetStateCommand"
+        required: true
+      responses:
+        "200":
+          description: State successfully updated
+        "401":
+          description: Unauthorized - user not authenticated
+  /automation/rules:
+    get:
+      tags:
+      - Automation
+      summary: List automation rules
+      description: Retrieves all automation rules for the authenticated user
+      operationId: listAutomations
+      responses:
+        "200":
+          description: List of automation rules
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          description: Unauthorized - user not authenticated
+  /automation/variables:
+    get:
+      tags:
+      - Automation
+      summary: List automation variables
+      description: Retrieves all automation variables for the authenticated user
+      operationId: listVariables
+      responses:
+        "200":
+          description: List of automation variables
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          description: Unauthorized - user not authenticated
+components:
+  schemas:
+    AlertData:
+      required:
+      - createdAt
+      - hidden
+      - id
+      - recipientId
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        nickname:
+          type: string
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        amount:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/Amount"
+        media:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/AlertData.AlertMedia"
+        levelName:
+          type: string
+          nullable: true
+        count:
+          type: integer
+          format: int32
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        hidden:
+          type: boolean
+    AlertData.AlertMedia:
+      required:
+      - url
+      type: object
+      properties:
+        url:
+          type: string
+    Amount:
+      required:
+      - currency
+      - major
+      - minor
+      type: object
+      properties:
+        minor:
+          type: integer
+          format: int32
+        major:
+          type: integer
+          format: int32
+        currency:
+          type: string
+    AutomationActionDto:
+      required:
+      - id
+      - value
+      type: object
+      properties:
+        id:
+          type: string
+        value:
+          type: object
+          additionalProperties:
+            type: object
+    AutomationDto:
+      required:
+      - rules
+      - variables
+      type: object
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationRuleDto"
+        variables:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationVariableDto"
+    AutomationRuleDto:
+      required:
+      - actions
+      - id
+      - name
+      - triggers
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        triggers:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationTriggerDto"
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationActionDto"
+    AutomationTriggerDto:
+      required:
+      - id
+      - value
+      type: object
+      properties:
+        id:
+          type: string
+        value:
+          type: object
+          additionalProperties:
+            type: object
+    AutomationVariableDto:
+      required:
+      - id
+      - name
+      - type
+      - value
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+    GetAlertsApi.GetAlertsApiResponse:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Page_AlertData_"
+      - $ref: "#/components/schemas/Slice_AlertData_"
+    Page_AlertData_:
+      required:
+      - totalPages
+      - totalSize
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Slice_AlertData_"
+      - type: object
+        properties:
+          totalSize:
+            type: integer
+            format: int64
+          totalPages:
+            type: integer
+            format: int32
+    Pageable:
+      required:
+      - mode
+      - number
+      - size
+      - sort
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Sort"
+      - type: object
+        properties:
+          number:
+            type: integer
+            format: int32
+          size:
+            type: integer
+            format: int32
+          mode:
+            $ref: "#/components/schemas/Pageable.Mode"
+          sort:
+            $ref: "#/components/schemas/Sort"
+    Pageable.Mode:
+      type: string
+      enum:
+      - CURSOR_NEXT
+      - CURSOR_PREVIOUS
+      - OFFSET
+    SetState.SetStateCommand:
+      required:
+      - rules
+      - variables
+      type: object
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationRuleDto"
+        variables:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationVariableDto"
+    Slice_AlertData_:
+      required:
+      - content
+      - empty
+      - numberOfElements
+      - offset
+      - pageNumber
+      - pageable
+      - size
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/AlertData"
+        pageable:
+          $ref: "#/components/schemas/Pageable"
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+    Sort:
+      required:
+      - orderBy
+      type: object
+      properties:
+        orderBy:
+          type: array
+          items:
+            $ref: "#/components/schemas/Sort.Order"
+    Sort.Order:
+      required:
+      - ascending
+      - direction
+      - ignoreCase
+      - property
+      type: object
+      properties:
+        ignoreCase:
+          type: boolean
+        direction:
+          $ref: "#/components/schemas/Sort.Order.Direction"
+        property:
+          type: string
+        ascending:
+          type: boolean
+    Sort.Order.Direction:
+      type: string
+      enum:
+      - ASC
+      - DESC
