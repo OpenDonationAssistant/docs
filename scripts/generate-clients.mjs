@@ -77,6 +77,10 @@ function buildPackageJson(name, version) {
       },
     },
     files: ['dist'],
+    repository: {
+      type: 'git',
+      url: 'git+https://github.com/opendonationassistant/docs.git',
+    },
     dependencies: {
       axios: '^1.13.4',
     },

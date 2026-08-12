@@ -13,9 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@opendonationassistant"
 
       - name: Generate packages
         run: npm install && npm run generate
@@ -28,4 +30,4 @@ jobs:
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           registry: "https://npm.pkg.github.com"
-          package: "./generated/paywall-service"
+          package: "generated/paywall-service"
