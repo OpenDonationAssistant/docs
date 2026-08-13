@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Generates one npm package per OpenAPI spec in api-reference/.
+ * Generates one npm package per OpenAPI spec in api-reference/, plus a single
+ * merged client package (@opendonationassistant/client) from the combined spec.
  *
  * For each valid spec it:
  *   1. Generates a self-contained TypeScript client (types + SDK + axios client)
@@ -8,6 +9,9 @@
  *   2. Writes a package.json, tsconfig.json, README.md and a manifest.json
  *      (recording the spec path + hash for change detection on publish).
  *   3. Compiles the client to dist/ so the package is installable.
+ *
+ * The merged spec (api-reference/merged.yml) is regenerated first from the
+ * latest version of each service spec.
  *
  * Usage: node scripts/generate-clients.mjs
  */
@@ -19,6 +23,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
 import { computeFileHash } from './lib/spec-hash.mjs';
+import { discoverSpecFiles, mergeSpecs, selectLatestSpecs } from './lib/merge-specs.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -27,18 +32,11 @@ const OUTPUT_DIR = join(ROOT, 'generated');
 const SCOPE = '@opendonationassistant';
 const REGISTRY = 'https://npm.pkg.github.com';
 const MANIFEST_FILE = 'manifest.json';
+const MERGED_SPEC = join(SPECS_DIR, 'merged.yml');
 
 // ---------------------------------------------------------------------------
 // Pure helpers
 // ---------------------------------------------------------------------------
-
-/** List OpenAPI spec files (oda-*.yml) in the specs directory. */
-function discoverSpecFiles(dir) {
-  return readdirSync(dir)
-    .filter((name) => name.startsWith('oda-') && name.endsWith('.yml'))
-    .map((name) => join(dir, name))
-    .sort();
-}
 
 /** Read and parse a YAML spec file. */
 function readSpec(filePath) {
@@ -111,10 +109,10 @@ function buildTsconfig() {
 }
 
 /** Build the README.md contents for a generated package. */
-function buildReadme(name, version) {
+function buildReadme(name, version, description) {
   return `# ${name}
 
-TypeScript client for the \`${name}\` service (v${version}).
+TypeScript client for ${description} (v${version}).
 
 Generated from the OpenAPI spec in \`api-reference/\`. Do not edit generated files.
 
@@ -203,7 +201,7 @@ function buildPackage(pkgDir) {
 }
 
 /** Generate a full npm package for a single spec. */
-async function generatePackage(specPath) {
+async function generatePackage(specPath, description = null) {
   const spec = readSpec(specPath);
   const info = spec?.info;
 
@@ -222,7 +220,7 @@ async function generatePackage(specPath) {
 
   writeFileSync(join(pkgDir, 'package.json'), JSON.stringify(buildPackageJson(name, version), null, 2) + '\n');
   writeFileSync(join(pkgDir, 'tsconfig.json'), JSON.stringify(buildTsconfig(), null, 2) + '\n');
-  writeFileSync(join(pkgDir, 'README.md'), buildReadme(name, version));
+  writeFileSync(join(pkgDir, 'README.md'), buildReadme(name, version, description ?? `the \`${name}\` service`));
 
   const manifest = {
     name,
@@ -243,6 +241,12 @@ async function generatePackage(specPath) {
 // ---------------------------------------------------------------------------
 
 async function main() {
+  // Regenerate the merged spec from the latest version of each service.
+  const selected = selectLatestSpecs(discoverSpecFiles(SPECS_DIR));
+  const merged = mergeSpecs(selected);
+  writeFileSync(MERGED_SPEC, YAML.stringify(merged) + '\n');
+  console.log(`Merged ${selected.length} service spec(s) into ${MERGED_SPEC}`);
+
   const specs = discoverSpecFiles(SPECS_DIR);
   if (specs.length === 0) {
     console.error(`No specs found in ${SPECS_DIR}`);
@@ -260,6 +264,17 @@ async function main() {
     } catch (error) {
       console.error(`FAILED ${specPath}:`, error.message);
     }
+  }
+
+  // Generate the single merged client package.
+  try {
+    const mergedResult = await generatePackage(
+      MERGED_SPEC,
+      'all OpenDonationAssistant microservices',
+    );
+    if (mergedResult) results.push(mergedResult);
+  } catch (error) {
+    console.error(`FAILED ${MERGED_SPEC}:`, error.message);
   }
 
   console.log(`\nDone. Generated ${results.length} package(s) in ${OUTPUT_DIR}`);

@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Generates TypeScript API client npm packages from OpenAPI specs in api-reference/",
   "scripts": {
+    "merge": "node scripts/merge-specs.mjs",
     "generate": "node scripts/generate-clients.mjs",
     "publish": "node scripts/publish-clients.mjs"
   },
