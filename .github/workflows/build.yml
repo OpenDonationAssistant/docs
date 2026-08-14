@@ -46,14 +46,14 @@ jobs:
           registry: "https://npm.pkg.github.com"
           package: "generated/widget-service"
 
-      - name: Install merged client
-        run: npm install
-        working-directory: "generated/client"
-
-      - uses: JS-DevTools/npm-publish@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          registry: "https://npm.pkg.github.com"
-          package: "generated/client"
+      # - name: Install merged client
+      #   run: npm install
+      #   working-directory: "generated/client"
+      #
+      # - uses: JS-DevTools/npm-publish@v3
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     token: "${{ secrets.GITHUB_TOKEN }}"
+      #     registry: "https://npm.pkg.github.com"
+      #     package: "generated/client"
