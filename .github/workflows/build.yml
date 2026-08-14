@@ -34,6 +34,18 @@ jobs:
           registry: "https://npm.pkg.github.com"
           package: "generated/paywall-service"
 
+      - name: Install npm package
+        run: npm install
+        working-directory: "generated/widget-service"
+
+      - uses: JS-DevTools/npm-publish@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          registry: "https://npm.pkg.github.com"
+          package: "generated/widget-service"
+
       - name: Install merged client
         run: npm install
         working-directory: "generated/client"
