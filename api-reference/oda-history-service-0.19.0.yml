@@ -461,6 +461,11 @@ components:
         deleted:
           type: boolean
           description: Soft-delete flag for history item
+        metadata:
+          type: object
+          additionalProperties:
+            type: object
+          description: Additional metadata associated with the history item
       description: History item representing a donation or event
     HistoryItemData.ActionRequest:
       type: object
