@@ -58,6 +58,18 @@ jobs:
           registry: "https://npm.pkg.github.com"
           package: "generated/streamelements-service"
 
+      - name: Install npm package
+        run: npm install
+        working-directory: "generated/automation-service"
+
+      - uses: JS-DevTools/npm-publish@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          registry: "https://npm.pkg.github.com"
+          package: "generated/automation-service"
+
       # - name: Install merged client
       #   run: npm install
       #   working-directory: "generated/client"
