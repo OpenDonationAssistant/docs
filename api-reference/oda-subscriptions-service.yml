@@ -1,0 +1,297 @@
+openapi: 3.0.1
+info:
+  title: oda-subscriptions-service
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 0.1.0
+paths:
+  /apps:
+    get:
+      summary: List OpenID Connect applications
+      description: Returns all OpenID Connect applications for the authenticated user
+      operationId: getApps
+      responses:
+        "200":
+          description: OpenID Connect applications found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        "401":
+          description: Unauthorized
+          content:
+            application/json: {}
+  /apps/commands/deregister-oidc-client:
+    post:
+      summary: Deregister OpenID Connect application
+      description: Deletes an existing OpenID Connect client application from Keycloak
+      operationId: deregisterOidcApplication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeregisterOidcApplication.DeregisterOidcClientCommand"
+        required: true
+      responses:
+        "200":
+          description: OpenID Connect application deregistered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
+        "401":
+          description: Unauthorized
+          content:
+            application/json: {}
+  /apps/commands/refresh-client-secret:
+    post:
+      summary: Refresh OpenID Connect client secret
+      description: Regenerates the client secret of an existing OpenID Connect client
+        application in Keycloak
+      operationId: refreshClientSecret
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshClientSecret.RefreshClientSecretCommand"
+        required: true
+      responses:
+        "200":
+          description: Client secret regenerated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshClientSecret.RefreshedClientSecret"
+        "401":
+          description: Unauthorized
+          content:
+            application/json: {}
+        "404":
+          description: OpenID Connect application not mapped to user
+          content:
+            application/json: {}
+  /apps/commands/register-oidc-client:
+    post:
+      summary: Register OpenID Connect application
+      description: "Creates a new OpenID Connect client application in Keycloak and,\
+        \ generates its client secret"
+      operationId: registerOidcApplication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterOidcClientCommand"
+        required: true
+      responses:
+        "200":
+          description: OpenID Connect application registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OidcClientRegistrationResult"
+        "401":
+          description: Unauthorized
+          content:
+            application/json: {}
+  /subscriptions:
+    get:
+      summary: Get all subscriptions for the authenticated recipient
+      description: Retrieves all subscriptions for the currently authenticated recipient
+      operationId: getSubscriptionsByRecipient
+      responses:
+        "200":
+          description: Subscriptions found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionData"
+        "401":
+          description: Unauthorized
+          content:
+            application/json: {}
+  /subscriptions/commands/add-queue-subscription:
+    post:
+      summary: Subscribe to events
+      description: Creates a new subscription
+      operationId: addSubscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddSubscription.AddSubscriptionCommand"
+        required: true
+      responses:
+        "200":
+          description: Subscription successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
+  /subscriptions/commands/delete:
+    post:
+      summary: Delete subscription by ID
+      description: Deletes a subscription by its ID
+      operationId: deleteSubscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteSubscription.DeleteSubscriptionCommand"
+        required: true
+      responses:
+        "200":
+          description: Subscription successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
+        "404":
+          description: Subscription not found or not owned by user
+          content:
+            application/json: {}
+  /subscriptions/{id}:
+    get:
+      summary: Get subscription by ID
+      description: Retrieves a subscription by its ID
+      operationId: getSubscription
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Subscription found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionData"
+        "404":
+          description: Subscription not found
+          content:
+            application/json: {}
+components:
+  schemas:
+    AddSubscription.AddSubscriptionCommand:
+      required:
+      - events
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            type: string
+    DeleteSubscription.DeleteSubscriptionCommand:
+      required:
+      - subscriptionId
+      type: object
+      properties:
+        subscriptionId:
+          type: string
+    DeregisterOidcApplication.DeregisterOidcClientCommand:
+      required:
+      - clientId
+      type: object
+      properties:
+        clientId:
+          type: string
+    OidcClientRegistrationResult:
+      required:
+      - clientId
+      - clientInternalId
+      - realm
+      type: object
+      properties:
+        clientId:
+          type: string
+        clientInternalId:
+          type: string
+        realm:
+          type: string
+        clientSecret:
+          type: string
+          nullable: true
+      description: |-
+        Result of a successful OpenID Connect application registration.
+
+
+        `clientSecret` is only populated when the registered application is
+        confidential and a secret was requested/generated.
+    RefreshClientSecret.RefreshClientSecretCommand:
+      required:
+      - clientInternalId
+      type: object
+      properties:
+        clientInternalId:
+          type: string
+    RefreshClientSecret.RefreshedClientSecret:
+      required:
+      - clientInternalId
+      - clientSecret
+      type: object
+      properties:
+        clientInternalId:
+          type: string
+        clientSecret:
+          type: string
+    RegisterOidcClientCommand:
+      required:
+      - clientName
+      - redirectUris
+      type: object
+      properties:
+        clientName:
+          type: string
+        redirectUris:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+          nullable: true
+        clientId:
+          type: string
+          nullable: true
+        standardFlowEnabled:
+          type: boolean
+          nullable: true
+        implicitFlowEnabled:
+          type: boolean
+          nullable: true
+        directAccessGrantsEnabled:
+          type: boolean
+          nullable: true
+        serviceAccountsEnabled:
+          type: boolean
+          nullable: true
+      description: |-
+        Payload accepted by the OIDC app registration command endpoint.
+
+
+        All flow related boolean flags are nullable objects so that an omitted
+        value can be distinguished from an explicit `false` and sensible
+        defaults can be applied.
+    SubscriptionData:
+      required:
+      - events
+      - id
+      - recipientId
+      - subscriberId
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        subscriberId:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+    Void:
+      type: object
