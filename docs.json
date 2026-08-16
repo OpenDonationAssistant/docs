@@ -22,21 +22,21 @@
         "groups": [
           {
             "group": "History",
-            "openapi": "api-reference/oda-history-service-1.0.0.yml",
+            "openapi": "api-reference/oda-history-service-0.19.0.yml",
             "pages": [
               "history-service-description"
             ]
           },
           {
             "group": "Actions",
-            "openapi": "api-reference/oda-actions-service-1.0.0.yml",
+            "openapi": "api-reference/oda-actions-service-0.1.0.yml",
             "pages": [
               "actions-service-description"
             ]
           },
           {
             "group": "Automation",
-            "openapi": "api-reference/oda-automation-service-1.0.0.yml",
+            "openapi": "api-reference/oda-automation-service-0.3.0.yml",
             "pages": [
               "automation-service-description"
             ]
@@ -85,28 +85,28 @@
           },
           {
             "group": "Payment",
-            "openapi": "api-reference/oda-payment-service-1.0.0.yml",
+            "openapi": "api-reference/oda-payment-service-0.5.0.yml",
             "pages": [
               "payment-service-description"
             ]
           },
           {
             "group": "Recipient",
-            "openapi": "api-reference/oda-recipient-service-1.0.0.yml",
+            "openapi": "api-reference/oda-recipient-service-0.13.0.yml",
             "pages": [
               "recipient-service-description"
             ]
           },
           {
             "group": "Twitch",
-            "openapi": "api-reference/oda-twitch-service-1.0.0.yml",
+            "openapi": "api-reference/oda-twitch-service-0.1.0.yml",
             "pages": [
               "twitch-service-description"
             ]
           },
           {
             "group": "Widgets",
-            "openapi": "api-reference/oda-widget-service-1.0.0.yml",
+            "openapi": "api-reference/oda-widget-service-0.14.0.yml",
             "pages": [
               "untitled-page"
             ]
