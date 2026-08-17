@@ -17,13 +17,9 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
+                $ref: "#/components/schemas/OidcController.GetAppsResponse"
         "401":
           description: Unauthorized
-          content:
-            application/json: {}
   /apps/commands/deregister-oidc-client:
     post:
       summary: Deregister OpenID Connect application
@@ -199,6 +195,28 @@ components:
       properties:
         clientId:
           type: string
+    OidcApplication:
+      required:
+      - clientId
+      - clientInternalId
+      type: object
+      properties:
+        clientId:
+          type: string
+        clientInternalId:
+          type: string
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+      description: |-
+        Summary of an OpenID Connect application owned by a user.
+
+
+        `name` and `description` are optional Keycloak client
+        attributes and may be absent.
     OidcClientRegistrationResult:
       required:
       - clientId
@@ -221,6 +239,53 @@ components:
 
         `clientSecret` is only populated when the registered application is
         confidential and a secret was requested/generated.
+    OidcController.GetAppsResponse:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Page_OidcApplication_"
+      - $ref: "#/components/schemas/Slice_OidcApplication_"
+    Page_OidcApplication_:
+      required:
+      - totalPages
+      - totalSize
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Slice_OidcApplication_"
+      - type: object
+        properties:
+          totalSize:
+            type: integer
+            format: int64
+          totalPages:
+            type: integer
+            format: int32
+    Pageable:
+      required:
+      - mode
+      - number
+      - size
+      - sort
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Sort"
+      - type: object
+        properties:
+          number:
+            type: integer
+            format: int32
+          size:
+            type: integer
+            format: int32
+          mode:
+            $ref: "#/components/schemas/Pageable.Mode"
+          sort:
+            $ref: "#/components/schemas/Sort"
+    Pageable.Mode:
+      type: string
+      enum:
+      - CURSOR_NEXT
+      - CURSOR_PREVIOUS
+      - OFFSET
     RefreshClientSecret.RefreshClientSecretCommand:
       required:
       - clientInternalId
@@ -275,6 +340,67 @@ components:
         All flow related boolean flags are nullable objects so that an omitted
         value can be distinguished from an explicit `false` and sensible
         defaults can be applied.
+    Slice_OidcApplication_:
+      required:
+      - content
+      - empty
+      - numberOfElements
+      - offset
+      - pageNumber
+      - pageable
+      - size
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/OidcApplication"
+        pageable:
+          $ref: "#/components/schemas/Pageable"
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+    Sort:
+      required:
+      - orderBy
+      type: object
+      properties:
+        orderBy:
+          type: array
+          items:
+            $ref: "#/components/schemas/Sort.Order"
+    Sort.Order:
+      required:
+      - ascending
+      - direction
+      - ignoreCase
+      - property
+      type: object
+      properties:
+        ignoreCase:
+          type: boolean
+        direction:
+          $ref: "#/components/schemas/Sort.Order.Direction"
+        property:
+          type: string
+        ascending:
+          type: boolean
+    Sort.Order.Direction:
+      type: string
+      enum:
+      - ASC
+      - DESC
     SubscriptionData:
       required:
       - events
