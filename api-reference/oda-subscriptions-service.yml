@@ -20,6 +20,29 @@ paths:
                 $ref: "#/components/schemas/OidcController.GetAppsResponse"
         "401":
           description: Unauthorized
+  /apps/commands/change-oidc-app-settings:
+    post:
+      summary: Change OpenID Connect application settings
+      description: "Updates the name, description and redirect URIs of an existing\
+        \ OpenID Connect client application in Keycloak"
+      operationId: changeOidcAppSettings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeOidcAppSettings.ChangeOidcAppSettingsCommand"
+        required: true
+      responses:
+        "200":
+          description: OpenID Connect application settings updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
+        "401":
+          description: Unauthorized
+          content:
+            application/json: {}
   /apps/commands/deregister-oidc-client:
     post:
       summary: Deregister OpenID Connect application
@@ -179,6 +202,24 @@ components:
       properties:
         events:
           type: array
+          items:
+            type: string
+    ChangeOidcAppSettings.ChangeOidcAppSettingsCommand:
+      required:
+      - clientInternalId
+      type: object
+      properties:
+        clientInternalId:
+          type: string
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        redirectUris:
+          type: array
+          nullable: true
           items:
             type: string
     DeleteSubscription.DeleteSubscriptionCommand:
