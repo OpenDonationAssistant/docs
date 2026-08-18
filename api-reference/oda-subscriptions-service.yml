@@ -261,13 +261,10 @@ components:
     OidcClientRegistrationResult:
       required:
       - clientId
-      - clientInternalId
       - realm
       type: object
       properties:
         clientId:
-          type: string
-        clientInternalId:
           type: string
         realm:
           type: string
