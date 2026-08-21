@@ -8,7 +8,7 @@ on:
 permissions: write-all
 
 jobs:
-  update-version:
+  generate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,83 +22,53 @@ jobs:
       - name: Generate packages
         run: npm install && npm run generate
 
-      - name: Install paywall-service
+      # Persist generated packages for the publish jobs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: generated-packages
+          path: generated
+          if-no-files-found: error
+
+  publish:
+    needs: generate
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - paywall-service
+          - widget-service
+          - streamelements-service
+          - automation-service
+          - subscriptions-service
+          - history-service
+          - kick-service
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@opendonationassistant"
+
+      - name: Restore generated packages
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-packages
+          path: generated
+
+      - name: Install ${{ matrix.service }}
         run: npm install
-        working-directory: "generated/paywall-service"
+        working-directory: "generated/${{ matrix.service }}"
 
       - uses: JS-DevTools/npm-publish@v3
-        name: "Publish paywall-service"
+        name: "Publish ${{ matrix.service }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           registry: "https://npm.pkg.github.com"
-          package: "generated/paywall-service"
-
-      - name: Install widget-service
-        run: npm install
-        working-directory: "generated/widget-service"
-
-      - uses: JS-DevTools/npm-publish@v3
-        name: "Publish widget-service"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          registry: "https://npm.pkg.github.com"
-          package: "generated/widget-service"
-
-      - name: Install streamelements-service
-        run: npm install
-        working-directory: "generated/streamelements-service"
-
-      - uses: JS-DevTools/npm-publish@v3
-        name: "Publish streamelements-service"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          registry: "https://npm.pkg.github.com"
-          package: "generated/streamelements-service"
-
-      - name: Install automation-service
-        run: npm install
-        working-directory: "generated/automation-service"
-
-      - uses: JS-DevTools/npm-publish@v3
-        name: "Publish automation-service"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          registry: "https://npm.pkg.github.com"
-          package: "generated/automation-service"
-
-      - name: Install subscriptions-service
-        run: npm install
-        working-directory: "generated/subscriptions-service"
-
-      - uses: JS-DevTools/npm-publish@v3
-        name: "Publish subscriptions-service"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          registry: "https://npm.pkg.github.com"
-          package: "generated/subscriptions-service"
-
-      - name: Install history-service
-        run: npm install
-        working-directory: "generated/history-service"
-
-      - uses: JS-DevTools/npm-publish@v3
-        name: "Publish history-service"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          registry: "https://npm.pkg.github.com"
-          package: "generated/history-service"
+          package: "generated/${{ matrix.service }}"
 
       # - name: Install merged client
       #   run: npm install
