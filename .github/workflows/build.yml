@@ -22,11 +22,12 @@ jobs:
       - name: Generate packages
         run: npm install && npm run generate
 
-      - name: Install npm package
+      - name: Install paywall-service
         run: npm install
         working-directory: "generated/paywall-service"
 
       - uses: JS-DevTools/npm-publish@v3
+        name: "Publish paywall-service"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -34,11 +35,12 @@ jobs:
           registry: "https://npm.pkg.github.com"
           package: "generated/paywall-service"
 
-      - name: Install npm package
+      - name: Install widget-service
         run: npm install
         working-directory: "generated/widget-service"
 
       - uses: JS-DevTools/npm-publish@v3
+        name: "Publish widget-service"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -46,11 +48,12 @@ jobs:
           registry: "https://npm.pkg.github.com"
           package: "generated/widget-service"
 
-      - name: Install npm package
+      - name: Install streamelements-service
         run: npm install
         working-directory: "generated/streamelements-service"
 
       - uses: JS-DevTools/npm-publish@v3
+        name: "Publish streamelements-service"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -58,11 +61,12 @@ jobs:
           registry: "https://npm.pkg.github.com"
           package: "generated/streamelements-service"
 
-      - name: Install npm package
+      - name: Install automation-service
         run: npm install
         working-directory: "generated/automation-service"
 
       - uses: JS-DevTools/npm-publish@v3
+        name: "Publish automation-service"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -70,11 +74,12 @@ jobs:
           registry: "https://npm.pkg.github.com"
           package: "generated/automation-service"
 
-      - name: Install npm package
+      - name: Install subscriptions-service
         run: npm install
         working-directory: "generated/subscriptions-service"
 
       - uses: JS-DevTools/npm-publish@v3
+        name: "Publish subscriptions-service"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -82,11 +87,12 @@ jobs:
           registry: "https://npm.pkg.github.com"
           package: "generated/subscriptions-service"
 
-      - name: Install npm package
+      - name: Install history-service
         run: npm install
         working-directory: "generated/history-service"
 
       - uses: JS-DevTools/npm-publish@v3
+        name: "Publish history-service"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
