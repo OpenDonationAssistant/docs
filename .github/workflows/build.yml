@@ -94,18 +94,6 @@ jobs:
           registry: "https://npm.pkg.github.com"
           package: "generated/history-service"
 
-      - name: Install npm package
-        run: npm install
-        working-directory: "generated/widgets-service"
-
-      - uses: JS-DevTools/npm-publish@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          registry: "https://npm.pkg.github.com"
-          package: "generated/widgets-service"
-
       # - name: Install merged client
       #   run: npm install
       #   working-directory: "generated/client"
