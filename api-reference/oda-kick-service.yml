@@ -1,0 +1,44 @@
+openapi: 3.0.1
+info:
+  title: oda-kick-service
+  version: 0.1.0
+paths:
+  /kick/commands/get-channel-info:
+    post:
+      operationId: getChatroomId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetChannelInfo.GetChannelInfoCommand"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetChannelInfo.ChannelInfo"
+components:
+  schemas:
+    GetChannelInfo.ChannelInfo:
+      required:
+      - chatroom
+      type: object
+      properties:
+        chatroom:
+          $ref: "#/components/schemas/GetChannelInfo.Chatroom"
+    GetChannelInfo.Chatroom:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+    GetChannelInfo.GetChannelInfoCommand:
+      required:
+      - tokenId
+      type: object
+      properties:
+        tokenId:
+          type: string
