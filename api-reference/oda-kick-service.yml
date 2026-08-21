@@ -5,6 +5,8 @@ info:
 paths:
   /kick/commands/get-channel-info:
     post:
+      summary: Get kick channel info
+      description: Get kick channel info
       operationId: getChatroomId
       requestBody:
         content:
