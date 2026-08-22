@@ -4,6 +4,9 @@ name: Build npm packages
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 permissions: write-all
 
