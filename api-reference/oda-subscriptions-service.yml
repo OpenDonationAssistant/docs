@@ -206,10 +206,10 @@ components:
             type: string
     ChangeOidcAppSettings.ChangeOidcAppSettingsCommand:
       required:
-      - clientInternalId
+      - id
       type: object
       properties:
-        clientInternalId:
+        id:
           type: string
         name:
           type: string
