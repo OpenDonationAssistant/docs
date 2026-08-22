@@ -13,6 +13,7 @@ tags:
   - name: Files
   - name: Font
   - name: History
+  - name: Kick
   - name: Max
   - name: Media
   - name: News
@@ -237,9 +238,30 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
+                $ref: "#/components/schemas/OidcController.GetAppsResponse"
+        "401":
+          description: Unauthorized
+      tags:
+        - Subscriptions
+  /apps/commands/change-oidc-app-settings:
+    post:
+      summary: Change OpenID Connect application settings
+      description: Updates the name, description and redirect URIs of an existing
+        OpenID Connect client application in Keycloak
+      operationId: changeOidcAppSettings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeOidcAppSettings.ChangeOidcAppSettingsCommand"
+        required: true
+      responses:
+        "200":
+          description: OpenID Connect application settings updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
         "401":
           description: Unauthorized
           content:
@@ -910,6 +932,26 @@ paths:
                 $ref: "#/components/schemas/DownloadCsv.CsvStatus"
       tags:
         - History
+  /kick/commands/get-channel-info:
+    post:
+      summary: Get kick channel info
+      description: Get kick channel info
+      operationId: getChatroomId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetChannelInfo.GetChannelInfoCommand"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetChannelInfo.ChannelInfo"
+      tags:
+        - Kick
   /max/accounts:
     get:
       operationId: accounts
@@ -1886,12 +1928,6 @@ paths:
       responses:
         "200":
           description: refresh 200 response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/OauthClient.RefreshedTokens"
       tags:
         - Recipient
   /recipients/tokens/set-token:
@@ -1934,6 +1970,24 @@ paths:
                 $ref: "#/components/schemas/Info"
       tags:
         - Recipient
+  /streamelements/channels/{channel}:
+    get:
+      operationId: getChannel
+      parameters:
+        - name: channel
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: getChannel 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StreamElementsChannelView"
+      tags:
+        - Streamelements
   /streamelements/session:
     get:
       operationId: getSession
@@ -2275,6 +2329,30 @@ paths:
                 $ref: "#/components/schemas/WidgetDto"
         "401":
           description: Unauthorized
+      tags:
+        - Widget
+  /widgets/commands/add-tag:
+    post:
+      summary: Add tag to widget
+      description: Adds a tag to a widget
+      operationId: addTag
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddTagApi.AddTagRequest"
+        required: true
+      responses:
+        "200":
+          description: Tag added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WidgetDto"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Widget not found
       tags:
         - Widget
   /widgets/commands/reorder:
@@ -2643,6 +2721,16 @@ components:
           type: array
           items:
             type: string
+    AddTagApi.AddTagRequest:
+      required:
+        - id
+        - tag
+      type: object
+      properties:
+        id:
+          type: string
+        tag:
+          type: string
     AddWebhook.AddWebhookRequest:
       required:
         - id
@@ -2862,6 +2950,24 @@ components:
       properties:
         gateway:
           type: string
+    ChangeOidcAppSettings.ChangeOidcAppSettingsCommand:
+      required:
+        - clientInternalId
+      type: object
+      properties:
+        clientInternalId:
+          type: string
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        redirectUris:
+          type: array
+          nullable: true
+          items:
+            type: string
     ChangePassword.ChangePasswordCommand:
       required:
         - newPassword
@@ -3373,6 +3479,27 @@ components:
       allOf:
         - $ref: "#/components/schemas/Page_AlertData_"
         - $ref: "#/components/schemas/Slice_AlertData_"
+    GetChannelInfo.ChannelInfo:
+      required:
+        - chatroom
+      type: object
+      properties:
+        chatroom:
+          $ref: "#/components/schemas/GetChannelInfo.Chatroom"
+    GetChannelInfo.Chatroom:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+    GetChannelInfo.GetChannelInfoCommand:
+      required:
+        - tokenId
+      type: object
+      properties:
+        tokenId:
+          type: string
     GetHistoryApi.GetHistoryResponse:
       type: object
       allOf:
@@ -3735,26 +3862,35 @@ components:
         demoUrl:
           type: string
           nullable: true
-    OauthClient.RefreshedTokens:
-      required:
-        - accessToken
-        - refreshToken
-      type: object
-      properties:
-        accessToken:
-          type: string
-        refreshToken:
-          type: string
-    OidcClientRegistrationResult:
+    OidcApplication:
       required:
         - clientId
         - clientInternalId
-        - realm
       type: object
       properties:
         clientId:
           type: string
         clientInternalId:
+          type: string
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+      description: |-
+        Summary of an OpenID Connect application owned by a user.
+
+
+        `name` and `description` are optional Keycloak client
+        attributes and may be absent.
+    OidcClientRegistrationResult:
+      required:
+        - clientId
+        - realm
+      type: object
+      properties:
+        clientId:
           type: string
         realm:
           type: string
@@ -3767,6 +3903,11 @@ components:
 
         `clientSecret` is only populated when the registered application is
         confidential and a secret was requested/generated.
+    OidcController.GetAppsResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Page_OidcApplication_"
+        - $ref: "#/components/schemas/Slice_OidcApplication_"
     Page_AlertData_:
       required:
         - totalPages
@@ -3819,6 +3960,21 @@ components:
       type: object
       allOf:
         - $ref: "#/components/schemas/Slice_Object_"
+        - type: object
+          properties:
+            totalSize:
+              type: integer
+              format: int64
+            totalPages:
+              type: integer
+              format: int32
+    Page_OidcApplication_:
+      required:
+        - totalPages
+        - totalSize
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Slice_OidcApplication_"
         - type: object
           properties:
             totalSize:
@@ -4375,6 +4531,37 @@ components:
         numberOfElements:
           type: integer
           format: int32
+    Slice_OidcApplication_:
+      required:
+        - content
+        - empty
+        - numberOfElements
+        - offset
+        - pageNumber
+        - pageable
+        - size
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/OidcApplication"
+        pageable:
+          $ref: "#/components/schemas/Pageable"
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
     Snippet:
       type: object
       properties:
@@ -4428,6 +4615,56 @@ components:
           type: string
           nullable: true
       description: Video statistics (views, likes, etc.)
+    StreamElementsChannelView:
+      required:
+        - _id
+        - alias
+        - avatar
+        - broadcasterType
+        - displayName
+        - inactive
+        - isPartner
+        - profile
+        - provider
+        - providerId
+        - suspended
+        - username
+      type: object
+      properties:
+        profile:
+          $ref: "#/components/schemas/StreamElementsChannelView.Profile"
+        _id:
+          type: string
+        isPartner:
+          type: boolean
+        providerId:
+          type: string
+        displayName:
+          type: string
+        username:
+          type: string
+        avatar:
+          type: string
+        suspended:
+          type: boolean
+        provider:
+          type: string
+        broadcasterType:
+          type: string
+        alias:
+          type: string
+        inactive:
+          type: boolean
+    StreamElementsChannelView.Profile:
+      required:
+        - headerImage
+        - title
+      type: object
+      properties:
+        title:
+          type: string
+        headerImage:
+          type: string
     StreamElementsSessionView:
       required:
         - channel
@@ -4802,6 +5039,7 @@ components:
         - name
         - ownerId
         - sortOrder
+        - tags
         - type
       type: object
       properties:
@@ -4824,6 +5062,10 @@ components:
           type: boolean
         deleted:
           type: boolean
+        tags:
+          type: array
+          items:
+            type: string
     history_Amount:
       required:
         - currency
