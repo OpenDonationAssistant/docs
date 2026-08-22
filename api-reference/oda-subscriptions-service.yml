@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.1.0
+  version: 0.5.0
 paths:
   /apps:
     get:
@@ -206,10 +206,10 @@ components:
             type: string
     ChangeOidcAppSettings.ChangeOidcAppSettingsCommand:
       required:
-      - clientInternalId
+      - id
       type: object
       properties:
-        clientInternalId:
+        id:
           type: string
         name:
           type: string
@@ -239,12 +239,12 @@ components:
     OidcApplication:
       required:
       - clientId
-      - clientInternalId
+      - id
       type: object
       properties:
-        clientId:
+        id:
           type: string
-        clientInternalId:
+        clientId:
           type: string
         name:
           type: string
@@ -252,31 +252,16 @@ components:
         description:
           type: string
           nullable: true
-      description: |-
-        Summary of an OpenID Connect application owned by a user.
-
-
-        `name` and `description` are optional Keycloak client
-        attributes and may be absent.
-    OidcClientRegistrationResult:
-      required:
-      - clientId
-      - realm
-      type: object
-      properties:
-        clientId:
-          type: string
-        realm:
-          type: string
         clientSecret:
           type: string
           nullable: true
-      description: |-
-        Result of a successful OpenID Connect application registration.
-
-
-        `clientSecret` is only populated when the registered application is
-        confidential and a secret was requested/generated.
+    OidcClientRegistrationResult:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
     OidcController.GetAppsResponse:
       type: object
       allOf:
@@ -326,18 +311,18 @@ components:
       - OFFSET
     RefreshClientSecret.RefreshClientSecretCommand:
       required:
-      - clientInternalId
+      - id
       type: object
       properties:
-        clientInternalId:
+        id:
           type: string
     RefreshClientSecret.RefreshedClientSecret:
       required:
-      - clientInternalId
       - clientSecret
+      - id
       type: object
       properties:
-        clientInternalId:
+        id:
           type: string
         clientSecret:
           type: string

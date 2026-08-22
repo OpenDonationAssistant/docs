@@ -109,6 +109,27 @@ paths:
                 $ref: "#/components/schemas/Void"
         "404":
           description: History item not found
+  /history/commands/link-twitch-id:
+    post:
+      summary: Link a Twitch refresh token
+      description: Stores the mapping between the authenticated recipient and the
+        Twitch refresh token ID
+      operationId: linkTwitchId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkTwitchIdApi.LinkTwitchIdCommand"
+        required: true
+      responses:
+        "200":
+          description: Successfully stored the mapping
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
+        "401":
+          description: Unauthorized - user not authenticated
   /history/commands/print-csv:
     post:
       operationId: printCsv
@@ -547,6 +568,13 @@ components:
           type: boolean
           description: Is this a new vote?
       description: Vote voting
+    LinkTwitchIdApi.LinkTwitchIdCommand:
+      type: object
+      properties:
+        refreshTokenId:
+          type: string
+          description: ID of the Twitch refresh token to link
+      description: Command to link a Twitch refresh token to the recipient
     Page_HistoryItemData_:
       required:
       - totalPages
