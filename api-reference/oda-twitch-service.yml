@@ -1,0 +1,48 @@
+openapi: 3.0.1
+info:
+  title: oda-twitch-service
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 0.1.0
+paths:
+  /twitch/subscribe:
+    post:
+      operationId: subscribeTwitchEvents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubscribeTwitchEvents.SubscribeTwitchEventsCommand"
+        required: true
+      responses:
+        "200":
+          description: subscribeTwitchEvents 200 response
+  /twitch/unsubscribeAll:
+    post:
+      operationId: subscribeTwitchEvents_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnsubscribeTwitchEvents.UnsubscribeAllTwitchEventCommand"
+        required: true
+      responses:
+        "200":
+          description: subscribeTwitchEvents_1 200 response
+components:
+  schemas:
+    SubscribeTwitchEvents.SubscribeTwitchEventsCommand:
+      required:
+      - userAccessToken
+      type: object
+      properties:
+        userAccessToken:
+          type: string
+    UnsubscribeTwitchEvents.UnsubscribeAllTwitchEventCommand:
+      required:
+      - userAccessToken
+      type: object
+      properties:
+        userAccessToken:
+          type: string
