@@ -45,6 +45,7 @@ jobs:
           - subscriptions-service
           - history-service
           - kick-service
+          - news-service
     steps:
       - uses: actions/checkout@v3
 
