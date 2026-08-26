@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.5.0
+  version: 0.7.0
 paths:
   /apps:
     get:
@@ -255,6 +255,19 @@ components:
         clientSecret:
           type: string
           nullable: true
+        redirectUris:
+          type: array
+          nullable: true
+          items:
+            type: string
+      description: |-
+        Summary of an OpenID Connect application owned by a user.
+
+
+        `name`, `description` and `redirectUris` are optional
+        Keycloak client attributes and may be absent. `clientSecret` holds
+        the last 6 characters of the application's client secret and is absent for
+        public clients or when Keycloak does not expose the secret.
     OidcClientRegistrationResult:
       required:
       - id

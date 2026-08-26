@@ -1,0 +1,643 @@
+openapi: 3.0.1
+info:
+  title: oda-media-service
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 0.10.0
+paths:
+  /commands/media/linkPayment:
+    post:
+      operationId: linkPayment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkPayment.LinkPaymentCommand"
+        required: true
+      responses:
+        "200":
+          description: linkPayment 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkPayment.LinkPaymentResponse"
+  /media/available:
+    get:
+      summary: Get available media
+      description: "Retrieves available videos from YouTube based on query, playlist\
+        \ ID, or video ID. At least one of query, playlistId, or videoId must be provided."
+      operationId: available
+      parameters:
+      - name: query
+        in: query
+        description: Search query for YouTube videos
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      - name: playlistId
+        in: query
+        description: YouTube playlist ID to retrieve videos from
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      - name: videoId
+        in: query
+        description: Specific YouTube video ID
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      responses:
+        "200":
+          description: List of available videos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Video"
+        "500":
+          description: Internal server error or video not found
+  /media/commands/mark-all-listened:
+    post:
+      operationId: markAllListened
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkAllListened.MarkAllListenedCommand"
+        required: true
+      responses:
+        "200":
+          description: markAllListened 200 response
+  /media/playlists/{playlistId}:
+    get:
+      summary: Get playlist videos
+      description: Retrieves videos from a YouTube playlist with shuffled order
+      operationId: get
+      parameters:
+      - name: playlistId
+        in: path
+        description: YouTube playlist ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Playlist with videos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Playlist"
+  /media/video:
+    get:
+      summary: List authenticated user's videos
+      description: Returns a list of ready videos for the authenticated recipient
+      operationId: list
+      responses:
+        "200":
+          description: List of user's videos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoData"
+        "401":
+          description: Unauthorized - authentication required
+    put:
+      operationId: prepareVideo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PrepareVideo.PrepareVideoCommand"
+        required: true
+      responses:
+        "200":
+          description: prepareVideo 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrepareVideo.PrepareVideoResponse"
+  /media/video/count:
+    get:
+      summary: Count ready videos for recipient
+      description: Returns the number of ready videos for a given recipient ID
+      operationId: countReadyVideos
+      parameters:
+      - name: recipientId
+        in: query
+        description: Recipient ID to count ready videos for
+        required: true
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Count of ready videos
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+  /media/video/handled:
+    get:
+      operationId: listHandled
+      parameters:
+      - name: page
+        in: query
+        required: true
+        explode: false
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: List of user's handled videos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoData"
+        "401":
+          description: Unauthorized - authentication required
+  /media/video/{ids}:
+    get:
+      summary: Get videos by IDs
+      description: Retrieves video data for a comma-separated list of video IDs
+      operationId: get_1
+      parameters:
+      - name: ids
+        in: path
+        description: Comma-separated video IDs
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: List of videos retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoData"
+  /media/video/{id}:
+    patch:
+      summary: Mark video as handled
+      description: Marks a video as handled by its ID
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        description: Video ID to mark as handled
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Video marked as handled
+  /playlists:
+    get:
+      summary: List playlists
+      description: Returns a paginated list of playlists for the authenticated user
+      operationId: playlists
+      parameters:
+      - name: pageable
+        in: query
+        description: Pagination parameters
+        required: true
+        explode: false
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: Page of playlists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Page_Object_"
+        "401":
+          description: Unauthorized - authentication required
+  /playlists/commands/create:
+    post:
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePlaylist.CreatePlaylistCommand"
+        required: true
+      responses:
+        "200":
+          description: create 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaylistDto"
+  /playlists/commands/delete:
+    post:
+      operationId: deletePlaylist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeletePlaylist.DeletePlaylistCommand"
+        required: true
+      responses:
+        "200":
+          description: deletePlaylist 200 response
+  /playlists/{playlistId}:
+    get:
+      summary: Get playlist by ID
+      description: Returns a specific playlist by its ID for the authenticated user
+      operationId: playlist
+      parameters:
+      - name: playlistId
+        in: path
+        description: Playlist ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Playlist details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaylistDto"
+        "401":
+          description: Unauthorized - authentication required
+        "404":
+          description: Playlist not found
+components:
+  schemas:
+    Amount:
+      required:
+      - currency
+      - major
+      - minor
+      type: object
+      properties:
+        minor:
+          type: integer
+          format: int32
+        major:
+          type: integer
+          format: int32
+        currency:
+          type: string
+    ContentDetails:
+      type: object
+      properties:
+        duration:
+          type: string
+          nullable: true
+        regionRestriction:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/RegionRestriction"
+        contentRating:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+      description: Content details like duration
+    CreatePlaylist.CreatePlaylistCommand:
+      required:
+      - items
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlaylistData.PlaylistItem"
+    DeletePlaylist.DeletePlaylistCommand:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+    Id:
+      type: object
+      properties:
+        kind:
+          type: string
+          nullable: true
+        videoId:
+          type: string
+          nullable: true
+    LinkPayment.LinkPaymentCommand:
+      required:
+      - mediaIds
+      - paymentId
+      - recipientId
+      type: object
+      properties:
+        recipientId:
+          type: string
+        paymentId:
+          type: string
+        mediaIds:
+          type: array
+          items:
+            type: string
+    LinkPayment.LinkPaymentResponse:
+      required:
+      - requiredAmount
+      type: object
+      properties:
+        requiredAmount:
+          $ref: "#/components/schemas/Amount"
+    MarkAllListened.MarkAllListenedCommand:
+      type: object
+    Page_Object_:
+      required:
+      - totalPages
+      - totalSize
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Slice_Object_"
+      - type: object
+        properties:
+          totalSize:
+            type: integer
+            format: int64
+          totalPages:
+            type: integer
+            format: int32
+    Pageable:
+      required:
+      - mode
+      - number
+      - size
+      - sort
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Sort"
+      - type: object
+        properties:
+          number:
+            type: integer
+            format: int32
+          size:
+            type: integer
+            format: int32
+          mode:
+            $ref: "#/components/schemas/Pageable.Mode"
+          sort:
+            $ref: "#/components/schemas/Sort"
+    Pageable.Mode:
+      type: string
+      enum:
+      - CURSOR_NEXT
+      - CURSOR_PREVIOUS
+      - OFFSET
+    Playlist:
+      type: object
+      properties:
+        items:
+          type: array
+          description: List of videos in the playlist
+          items:
+            $ref: "#/components/schemas/Video"
+        title:
+          type: string
+          description: Playlist title
+      description: Playlist containing videos
+    PlaylistData.PlaylistItem:
+      required:
+      - src
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+        src:
+          type: string
+    PlaylistDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique playlist identifier
+        title:
+          type: string
+          description: Playlist title
+        ownerId:
+          type: string
+          description: Owner user ID
+        items:
+          type: array
+          description: List of playlist items
+          items:
+            $ref: "#/components/schemas/PlaylistData.PlaylistItem"
+      description: Playlist data transfer object
+    PrepareVideo.PrepareVideoCommand:
+      required:
+      - recipientId
+      - url
+      type: object
+      properties:
+        url:
+          type: string
+        recipientId:
+          type: string
+    PrepareVideo.PrepareVideoResponse:
+      required:
+      - cost
+      - id
+      - originId
+      - provider
+      - thumbnail
+      - title
+      - url
+      type: object
+      properties:
+        id:
+          type: string
+        originId:
+          type: string
+        provider:
+          type: string
+        url:
+          type: string
+        title:
+          type: string
+        thumbnail:
+          type: string
+        cost:
+          $ref: "#/components/schemas/Amount"
+    RegionRestriction:
+      type: object
+      properties:
+        blocked:
+          type: array
+          nullable: true
+          items:
+            type: string
+    Slice_Object_:
+      required:
+      - content
+      - empty
+      - numberOfElements
+      - offset
+      - pageNumber
+      - pageable
+      - size
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+        pageable:
+          $ref: "#/components/schemas/Pageable"
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+    Snippet:
+      type: object
+      properties:
+        resourceId:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/Id"
+        title:
+          type: string
+          nullable: true
+        thumbnails:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/Thumbnail"
+          nullable: true
+      description: "Video snippet with title, description, thumbnails"
+    Sort:
+      required:
+      - orderBy
+      type: object
+      properties:
+        orderBy:
+          type: array
+          items:
+            $ref: "#/components/schemas/Sort.Order"
+    Sort.Order:
+      required:
+      - ascending
+      - direction
+      - ignoreCase
+      - property
+      type: object
+      properties:
+        ignoreCase:
+          type: boolean
+        direction:
+          $ref: "#/components/schemas/Sort.Order.Direction"
+        property:
+          type: string
+        ascending:
+          type: boolean
+    Sort.Order.Direction:
+      type: string
+      enum:
+      - ASC
+      - DESC
+    Statistics:
+      type: object
+      properties:
+        viewCount:
+          type: string
+          nullable: true
+      description: "Video statistics (views, likes, etc.)"
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+          nullable: true
+        width:
+          type: string
+          nullable: true
+        height:
+          type: string
+          nullable: true
+    Video:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Video ID
+          nullable: true
+        snippet:
+          description: "Video snippet with title, description, thumbnails"
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/Snippet"
+        contentDetails:
+          description: Content details like duration
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/ContentDetails"
+        statistics:
+          description: "Video statistics (views, likes, etc.)"
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/Statistics"
+      description: YouTube video data
+    VideoData:
+      required:
+      - system
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique video identifier
+        originId:
+          type: string
+          description: Original video ID from provider
+        provider:
+          type: string
+          description: "Video provider (e.g., youtube)"
+        url:
+          type: string
+          description: Video URL
+        title:
+          type: string
+          description: Video title
+        thumbnail:
+          type: string
+          description: Video thumbnail URL
+        status:
+          type: string
+          description: Video status
+        owner:
+          type: string
+          description: Owner of the video
+          nullable: true
+        recipientId:
+          type: string
+          description: Recipient ID associated with this video
+          nullable: true
+        readyTimestamp:
+          type: string
+          description: Timestamp when video is ready
+          format: date-time
+          nullable: true
+        paymentId:
+          type: string
+          description: Payment ID associated with this video
+          nullable: true
+        system:
+          type: string
+      description: Video data entity
