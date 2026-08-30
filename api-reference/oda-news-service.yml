@@ -8,7 +8,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.5.0
+  version: 0.7.0
 paths:
   /advice/commands/add-advice:
     post:
@@ -126,6 +126,12 @@ paths:
   /warnings/commands/clear:
     post:
       operationId: clearWarnings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WarningCommandsController.ClearWarningsCommand"
+        required: true
       responses:
         "200":
           description: clearWarnings 200 response
@@ -323,6 +329,14 @@ components:
         component:
           type: string
           nullable: true
+    WarningCommandsController.ClearWarningsCommand:
+      type: object
+      properties:
+        components:
+          type: array
+          nullable: true
+          items:
+            type: string
     WarningData:
       required:
       - message
