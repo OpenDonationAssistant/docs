@@ -320,6 +320,9 @@ components:
       properties:
         message:
           type: string
+        component:
+          type: string
+          nullable: true
     WarningData:
       required:
       - message
@@ -327,3 +330,6 @@ components:
       properties:
         message:
           type: string
+        component:
+          type: string
+          nullable: true
