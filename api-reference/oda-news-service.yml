@@ -340,6 +340,7 @@ components:
     WarningData:
       required:
       - message
+      - timestamp
       type: object
       properties:
         message:
@@ -347,3 +348,6 @@ components:
         component:
           type: string
           nullable: true
+        timestamp:
+          type: integer
+          format: int64
