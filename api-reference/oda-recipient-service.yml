@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.13.0
+  version: 0.14.0
 paths:
   /otp/create:
     post:
@@ -207,7 +207,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/TokenController.TokenDto"
+                  $ref: "#/components/schemas/TokenController.TokenInfoDto"
   /recipients/tokens/delete-token:
     post:
       operationId: deleteToken
@@ -562,13 +562,13 @@ components:
           type: string
         enabled:
           type: boolean
-    TokenController.TokenDto:
+    TokenController.TokenInfoDto:
       required:
       - enabled
       - id
+      - scopes
       - settings
       - system
-      - token
       - type
       type: object
       properties:
@@ -578,14 +578,16 @@ components:
           type: string
         type:
           type: string
-        token:
-          type: string
         enabled:
           type: boolean
         settings:
           type: object
           additionalProperties:
             type: object
+        scopes:
+          type: array
+          items:
+            type: string
     UpdateEmail.UpdateEmailCommand:
       required:
       - email
