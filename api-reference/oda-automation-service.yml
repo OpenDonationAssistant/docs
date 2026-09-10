@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.5.0
+  version: 0.6.0
 tags:
 - name: Automation
   description: Automation operations for managing rules and variables
@@ -173,9 +173,7 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                type: string
+              $ref: "#/components/schemas/UpdateBlacklistApi.UpdateBlacklistCommand"
         required: true
       responses:
         "200":
@@ -480,6 +478,15 @@ components:
           additionalProperties:
             type: string
           nullable: true
+    UpdateBlacklistApi.UpdateBlacklistCommand:
+      required:
+      - words
+      type: object
+      properties:
+        words:
+          type: array
+          items:
+            type: string
     WordFilterData:
       required:
       - id
