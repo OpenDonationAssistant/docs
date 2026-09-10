@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.4.0
+  version: 0.5.0
 tags:
 - name: Automation
   description: Automation operations for managing rules and variables
@@ -97,6 +97,25 @@ paths:
           description: State successfully updated
         "401":
           description: Unauthorized - user not authenticated
+  /automation/commands/trigger-rule:
+    post:
+      summary: Trigger automation rule by command
+      description: "Runs an iteration for the automation rule with the given id, using\
+        \ the command as the trigger source"
+      operationId: triggerRule
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TriggerRuleApi.TriggerRuleCommand"
+        required: true
+      responses:
+        "200":
+          description: Rule triggered
+        "401":
+          description: Unauthorized - user not authenticated
+        "404":
+          description: Rule not found
   /automation/rules:
     get:
       tags:
@@ -127,6 +146,44 @@ paths:
             application/json:
               schema:
                 type: object
+        "401":
+          description: Unauthorized - user not authenticated
+  /word-blacklist:
+    get:
+      summary: Get word blacklist
+      description: Retrieves the word blacklist for the authenticated user
+      operationId: getBlacklist
+      responses:
+        "200":
+          description: Blacklist entries for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WordFilterData"
+        "401":
+          description: Unauthorized - user not authenticated
+  /word-blacklist/commands/update:
+    post:
+      summary: Update word blacklist
+      description: Creates or updates the word blacklist for the authenticated user
+      operationId: updateBlacklist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        "200":
+          description: Blacklist updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WordFilterData"
         "401":
           description: Unauthorized - user not authenticated
 components:
@@ -404,3 +461,37 @@ components:
       enum:
       - ASC
       - DESC
+    TriggerRuleApi.TriggerRuleCommand:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          minLength: 1
+          type: string
+        nickname:
+          type: string
+          nullable: true
+        system:
+          type: string
+          nullable: true
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+    WordFilterData:
+      required:
+      - id
+      - recipientId
+      - words
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        words:
+          type: array
+          items:
+            type: string
