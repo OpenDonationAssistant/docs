@@ -8,7 +8,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.7.0
+  version: 0.8.0
 paths:
   /advice/commands/add-advice:
     post:
@@ -329,6 +329,9 @@ components:
         component:
           type: string
           nullable: true
+        priority:
+          type: string
+          nullable: true
     WarningCommandsController.ClearWarningsCommand:
       type: object
       properties:
@@ -340,6 +343,7 @@ components:
     WarningData:
       required:
       - message
+      - priority
       - timestamp
       type: object
       properties:
@@ -351,3 +355,5 @@ components:
         timestamp:
           type: integer
           format: int64
+        priority:
+          type: string
