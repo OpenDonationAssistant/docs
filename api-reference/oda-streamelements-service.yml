@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.2.0
+  version: 0.3.0
 paths:
   /streamelements/channels/{channel}:
     get:
@@ -93,7 +93,7 @@ components:
         channel:
           $ref: "#/components/schemas/StreamElementsSessionView.Channel"
         session:
-          $ref: "#/components/schemas/StreamElementsSessionView.Session"
+          $ref: "#/components/schemas/StreamElementsSessionView.ViewSession"
     StreamElementsSessionView.Channel:
       required:
       - username
@@ -101,34 +101,79 @@ components:
       properties:
         username:
           type: string
-    StreamElementsSessionView.Data:
+    StreamElementsSessionView.ViewData:
       required:
-      - follower-latest
       - tip-goal
       - tip-latest
       type: object
       properties:
         tip-latest:
-          $ref: "#/components/schemas/StreamElementsSessionView.Tip"
+          $ref: "#/components/schemas/StreamElementsSessionView.ViewTip"
         tip-goal:
-          $ref: "#/components/schemas/StreamElementsSessionView.Tip"
+          $ref: "#/components/schemas/StreamElementsSessionView.ViewTip"
         follower-latest:
-          $ref: "#/components/schemas/StreamElementsSessionView.Follower"
-    StreamElementsSessionView.Follower:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/StreamElementsSessionView.ViewFollower"
+        subscriber-latest:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/StreamElementsSessionView.ViewSubscriber"
+        raid-latest:
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/StreamElementsSessionView.ViewRaid"
+    StreamElementsSessionView.ViewFollower:
       required:
       - name
       type: object
       properties:
         name:
           type: string
-    StreamElementsSessionView.Session:
+    StreamElementsSessionView.ViewRaid:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        viewerCount:
+          type: integer
+          format: int32
+          nullable: true
+    StreamElementsSessionView.ViewSession:
       required:
       - data
       type: object
       properties:
         data:
-          $ref: "#/components/schemas/StreamElementsSessionView.Data"
-    StreamElementsSessionView.Tip:
+          $ref: "#/components/schemas/StreamElementsSessionView.ViewData"
+    StreamElementsSessionView.ViewSubscriber:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        tier:
+          type: string
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        cumulativeMonths:
+          type: integer
+          format: int32
+          nullable: true
+        totalMonths:
+          type: integer
+          format: int32
+          nullable: true
+        streakMonths:
+          type: integer
+          format: int32
+          nullable: true
+    StreamElementsSessionView.ViewTip:
       required:
       - amount
       - name
