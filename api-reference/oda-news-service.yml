@@ -60,6 +60,28 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/NewsDto"
+  /guides/commands/get-read:
+    get:
+      operationId: getReadGuides
+      responses:
+        "200":
+          description: getReadGuides 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuidesDto"
+  /guides/commands/mark-read:
+    post:
+      operationId: markRead
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkRead.MarkReadCommand"
+        required: true
+      responses:
+        "200":
+          description: markRead 200 response
   /news:
     get:
       operationId: getNews
@@ -190,12 +212,28 @@ components:
         rating:
           type: integer
           format: int32
+    GuidesDto:
+      required:
+      - ids
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
     MarkAsRead.MarkAsReadCommand:
       required:
       - newsId
       type: object
       properties:
         newsId:
+          type: string
+    MarkRead.MarkReadCommand:
+      required:
+      - guideId
+      type: object
+      properties:
+        guideId:
           type: string
     NewsDto:
       required:
