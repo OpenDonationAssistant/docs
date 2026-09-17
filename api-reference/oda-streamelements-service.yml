@@ -22,6 +22,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/StreamElementsChannelView"
+  /streamelements/import-overlay:
+    post:
+      operationId: importOverlay
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StreamElementsImportOverlayController.ImportOverlayRequest"
+        required: true
+      responses:
+        "200":
+          description: importOverlay 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OverlayWidgetImportResult"
   /streamelements/session:
     get:
       operationId: getSession
@@ -34,6 +50,38 @@ paths:
                 $ref: "#/components/schemas/StreamElementsSessionView"
 components:
   schemas:
+    ConversionWarning:
+      required:
+      - fallback
+      - reason
+      - seName
+      - seType
+      - seWidgetId
+      type: object
+      properties:
+        seWidgetId:
+          type: string
+        seType:
+          type: string
+        seName:
+          type: string
+        reason:
+          type: string
+        fallback:
+          type: string
+    OverlayWidgetImportResult:
+      required:
+      - warnings
+      - widgetId
+      type: object
+      properties:
+        widgetId:
+          type: string
+        warnings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConversionWarning"
+      description: Outcome of importing an overlay into a newly created ODA widget.
     StreamElementsChannelView:
       required:
       - _id
@@ -83,6 +131,16 @@ components:
         title:
           type: string
         headerImage:
+          type: string
+    StreamElementsImportOverlayController.ImportOverlayRequest:
+      required:
+      - tokenId
+      - url
+      type: object
+      properties:
+        url:
+          type: string
+        tokenId:
           type: string
     StreamElementsSessionView:
       required:
