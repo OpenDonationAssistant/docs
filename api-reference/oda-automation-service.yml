@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.6.0
+  version: 0.7.0
 tags:
 - name: Automation
   description: Automation operations for managing rules and variables
@@ -148,6 +148,83 @@ paths:
                 type: object
         "401":
           description: Unauthorized - user not authenticated
+  /panels:
+    get:
+      summary: List panels
+      description: Retrieves all panels for the authenticated user
+      operationId: listPanels
+      responses:
+        "200":
+          description: List of panels
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          description: Unauthorized - user not authenticated
+  /panels/commands/delete-panel:
+    post:
+      summary: Delete panel
+      description: Deletes a panel by id for the authenticated user
+      operationId: deletePanel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                command:
+                  $ref: "#/components/schemas/DeletePanelApi.DeletePanelCommand"
+        required: true
+      responses:
+        "200":
+          description: Panel deleted
+        "401":
+          description: Unauthorized - user not authenticated
+  /panels/commands/update-panel:
+    post:
+      summary: Update panel
+      description: Updates a panel by id for the authenticated user
+      operationId: updatePanel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePanelApi.UpdatePanelCommand"
+        required: true
+      responses:
+        "200":
+          description: Updated panel
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Void"
+        "401":
+          description: Unauthorized - user not authenticated
+        "404":
+          description: Panel not found
+  /panels/{id}:
+    get:
+      summary: Get panel
+      description: Retrieves a panel by id for the authenticated user
+      operationId: getPanel
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Panel
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PanelDto"
+        "401":
+          description: Unauthorized - user not authenticated
+        "404":
+          description: Panel not found
   /word-blacklist:
     get:
       summary: Get word blacklist
@@ -329,6 +406,14 @@ components:
           type: string
         value:
           type: string
+    DeletePanelApi.DeletePanelCommand:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          minLength: 1
+          type: string
     GetAlertsApi.GetAlertsApiResponse:
       type: object
       allOf:
@@ -376,6 +461,34 @@ components:
       - CURSOR_NEXT
       - CURSOR_PREVIOUS
       - OFFSET
+    PanelDto:
+      required:
+      - cards
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cards:
+          type: array
+          items:
+            $ref: "#/components/schemas/PanelDto.PanelCardDto"
+    PanelDto.PanelCardDto:
+      required:
+      - id
+      - ruleId
+      type: object
+      properties:
+        id:
+          type: string
+        ruleId:
+          type: string
+        title:
+          type: string
+          nullable: true
     SetEnabled.SetEnabledCommand:
       required:
       - ruleId
@@ -487,6 +600,25 @@ components:
           type: array
           items:
             type: string
+    UpdatePanelApi.UpdatePanelCommand:
+      required:
+      - cards
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          minLength: 1
+          type: string
+        name:
+          minLength: 1
+          type: string
+        cards:
+          type: array
+          items:
+            $ref: "#/components/schemas/PanelDto.PanelCardDto"
+    Void:
+      type: object
     WordFilterData:
       required:
       - id
