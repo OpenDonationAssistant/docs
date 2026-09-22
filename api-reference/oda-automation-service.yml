@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.8.0
+  version: 0.9.0
 tags:
 - name: Automation
   description: Automation operations for managing rules and variables
@@ -124,6 +124,26 @@ paths:
       description: Retrieves paginated automation rules for the authenticated user
       operationId: listAutomations
       parameters:
+      - name: page
+        in: query
+        description: Zero-indexed page number (0-based)
+        required: false
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          example: 0
+      - name: size
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          format: int32
+      - name: sort
+        in: query
+        description: "Sorting criteria in format: property,asc|desc"
+        schema:
+          type: string
       - name: pageable
         in: query
         required: true
@@ -148,6 +168,26 @@ paths:
         user
       operationId: listVariables
       parameters:
+      - name: page
+        in: query
+        description: Zero-indexed page number (0-based)
+        required: false
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          example: 0
+      - name: size
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          format: int32
+      - name: sort
+        in: query
+        description: "Sorting criteria in format: property,asc|desc"
+        schema:
+          type: string
       - name: pageable
         in: query
         required: true
@@ -169,6 +209,26 @@ paths:
       description: Retrieves paginated panels for the authenticated user
       operationId: listPanels
       parameters:
+      - name: page
+        in: query
+        description: Zero-indexed page number (0-based)
+        required: false
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          example: 0
+      - name: size
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          format: int32
+      - name: sort
+        in: query
+        description: "Sorting criteria in format: property,asc|desc"
+        schema:
+          type: string
       - name: pageable
         in: query
         required: true
