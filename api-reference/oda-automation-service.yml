@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.7.0
+  version: 0.8.0
 tags:
 - name: Automation
   description: Automation operations for managing rules and variables
