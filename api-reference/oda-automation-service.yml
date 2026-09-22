@@ -166,15 +166,42 @@ paths:
   /panels:
     get:
       summary: List panels
-      description: Retrieves all panels for the authenticated user
+      description: Retrieves paginated panels for the authenticated user
       operationId: listPanels
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        explode: false
+        schema:
+          $ref: "#/components/schemas/Pageable"
       responses:
         "200":
-          description: List of panels
+          description: Paginated list of panels
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/PanelsApi.ListPanelsResponse"
+        "401":
+          description: Unauthorized - user not authenticated
+  /panels/commands/create-panel:
+    post:
+      summary: Create panel
+      description: Creates a new panel for the authenticated user
+      operationId: createPanel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePanelApi.CreatePanelCommand"
+        required: true
+      responses:
+        "200":
+          description: Created panel
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePanelApi.CreatePanelResponse"
         "401":
           description: Unauthorized - user not authenticated
   /panels/commands/delete-panel:
@@ -431,6 +458,26 @@ components:
           type: string
         value:
           type: string
+    CreatePanelApi.CreatePanelCommand:
+      required:
+      - cards
+      - name
+      type: object
+      properties:
+        name:
+          minLength: 1
+          type: string
+        cards:
+          type: array
+          items:
+            $ref: "#/components/schemas/PanelDto.PanelCardDto"
+    CreatePanelApi.CreatePanelResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
     DeletePanelApi.DeletePanelCommand:
       required:
       - id
@@ -481,6 +528,21 @@ components:
       type: object
       allOf:
       - $ref: "#/components/schemas/Slice_AutomationVariableDto_"
+      - type: object
+        properties:
+          totalSize:
+            type: integer
+            format: int64
+          totalPages:
+            type: integer
+            format: int32
+    Page_PanelDto_:
+      required:
+      - totalPages
+      - totalSize
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Slice_PanelDto_"
       - type: object
         properties:
           totalSize:
@@ -544,6 +606,11 @@ components:
         title:
           type: string
           nullable: true
+    PanelsApi.ListPanelsResponse:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Page_PanelDto_"
+      - $ref: "#/components/schemas/Slice_PanelDto_"
     SetEnabled.SetEnabledCommand:
       required:
       - ruleId
@@ -643,6 +710,37 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AutomationVariableDto"
+        pageable:
+          $ref: "#/components/schemas/Pageable"
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+    Slice_PanelDto_:
+      required:
+      - content
+      - empty
+      - numberOfElements
+      - offset
+      - pageNumber
+      - pageable
+      - size
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/PanelDto"
         pageable:
           $ref: "#/components/schemas/Pageable"
         pageNumber:
