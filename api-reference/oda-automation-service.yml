@@ -121,15 +121,22 @@ paths:
       tags:
       - Automation
       summary: List automation rules
-      description: Retrieves all automation rules for the authenticated user
+      description: Retrieves paginated automation rules for the authenticated user
       operationId: listAutomations
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        explode: false
+        schema:
+          $ref: "#/components/schemas/Pageable"
       responses:
         "200":
-          description: List of automation rules
+          description: Paginated list of automation rules
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/AutomationOperationsApi.ListAutomationsResponse"
         "401":
           description: Unauthorized - user not authenticated
   /automation/variables:
@@ -137,15 +144,23 @@ paths:
       tags:
       - Automation
       summary: List automation variables
-      description: Retrieves all automation variables for the authenticated user
+      description: Retrieves paginated automation variables for the authenticated
+        user
       operationId: listVariables
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        explode: false
+        schema:
+          $ref: "#/components/schemas/Pageable"
       responses:
         "200":
-          description: List of automation variables
+          description: Paginated list of automation variables
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/AutomationOperationsApi.ListVariablesResponse"
         "401":
           description: Unauthorized - user not authenticated
   /panels:
@@ -350,6 +365,16 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AutomationVariableDto"
+    AutomationOperationsApi.ListAutomationsResponse:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Page_AutomationRuleDto_"
+      - $ref: "#/components/schemas/Slice_AutomationRuleDto_"
+    AutomationOperationsApi.ListVariablesResponse:
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Page_AutomationVariableDto_"
+      - $ref: "#/components/schemas/Slice_AutomationVariableDto_"
     AutomationRuleDto:
       required:
       - actions
@@ -426,6 +451,36 @@ components:
       type: object
       allOf:
       - $ref: "#/components/schemas/Slice_AlertData_"
+      - type: object
+        properties:
+          totalSize:
+            type: integer
+            format: int64
+          totalPages:
+            type: integer
+            format: int32
+    Page_AutomationRuleDto_:
+      required:
+      - totalPages
+      - totalSize
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Slice_AutomationRuleDto_"
+      - type: object
+        properties:
+          totalSize:
+            type: integer
+            format: int64
+          totalPages:
+            type: integer
+            format: int32
+    Page_AutomationVariableDto_:
+      required:
+      - totalPages
+      - totalSize
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/Slice_AutomationVariableDto_"
       - type: object
         properties:
           totalSize:
@@ -526,6 +581,68 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AlertData"
+        pageable:
+          $ref: "#/components/schemas/Pageable"
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+    Slice_AutomationRuleDto_:
+      required:
+      - content
+      - empty
+      - numberOfElements
+      - offset
+      - pageNumber
+      - pageable
+      - size
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationRuleDto"
+        pageable:
+          $ref: "#/components/schemas/Pageable"
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+    Slice_AutomationVariableDto_:
+      required:
+      - content
+      - empty
+      - numberOfElements
+      - offset
+      - pageNumber
+      - pageable
+      - size
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationVariableDto"
         pageable:
           $ref: "#/components/schemas/Pageable"
         pageNumber:
