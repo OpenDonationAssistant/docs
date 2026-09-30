@@ -186,10 +186,14 @@ components:
       type: object
       properties:
         title:
+          maxLength: 255
+          minLength: 1
           type: string
         description:
+          minLength: 1
           type: string
         demoUrl:
+          maxLength: 255
           type: string
           nullable: true
         global:
