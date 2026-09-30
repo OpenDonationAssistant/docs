@@ -123,6 +123,7 @@ paths:
         in: path
         required: true
         schema:
+          minLength: 1
           type: string
       requestBody:
         content:
@@ -177,6 +178,7 @@ components:
       type: object
       properties:
         text:
+          minLength: 1
           type: string
     AddNews.AddNewsCommand:
       required:
@@ -214,6 +216,8 @@ components:
       type: object
       properties:
         rating:
+          maximum: 10
+          minimum: -1
           type: integer
           format: int32
     GuidesDto:
@@ -231,6 +235,7 @@ components:
       type: object
       properties:
         newsId:
+          minLength: 1
           type: string
     MarkRead.MarkReadCommand:
       required:
@@ -238,6 +243,7 @@ components:
       type: object
       properties:
         guideId:
+          minLength: 1
           type: string
     NewsDto:
       required:
@@ -367,6 +373,7 @@ components:
       type: object
       properties:
         message:
+          minLength: 1
           type: string
         component:
           type: string
