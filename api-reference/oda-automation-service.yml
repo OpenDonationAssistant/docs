@@ -203,6 +203,77 @@ paths:
                 $ref: "#/components/schemas/AutomationOperationsApi.ListVariablesResponse"
         "401":
           description: Unauthorized - user not authenticated
+  /meld-settings:
+    get:
+      summary: Get Meld Studio settings
+      description: Retrieves Meld Studio settings for the authenticated user
+      operationId: getMeldSettings
+      responses:
+        "200":
+          description: Meld Studio settings for the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeldSettingsDto"
+        "401":
+          description: Unauthorized - user not authenticated. Also would be returned
+            if Meld Studio is not configured
+  /meld-settings/commands/update:
+    post:
+      summary: Update Meld Studio settings
+      description: Creates or updates Meld Studio settings for the authenticated user
+      operationId: updateMeldSettings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMeldSettingsApi.UpdateMeldSettingsCommand"
+        required: true
+      responses:
+        "200":
+          description: Meld Studio settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeldSettingsDto"
+        "401":
+          description: Unauthorized - user not authenticated
+  /obs-settings:
+    get:
+      summary: Get OBS Studio settings
+      description: Retrieves the OBS Studio settings for the authenticated user
+      operationId: getObsSettings
+      responses:
+        "200":
+          description: OBS Studio settings for the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObsSettingsDto"
+        "401":
+          description: Unauthorized - user not authenticated or OBS Studio is not
+            configured
+  /obs-settings/commands/update:
+    post:
+      summary: Update OBS Studio settings
+      description: Creates or updates the OBS Studio settings for the authenticated
+        user
+      operationId: updateObsSettings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateObsSettingsApi.UpdateObsSettingsCommand"
+        required: true
+      responses:
+        "200":
+          description: Updated OBS Studio settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObsSettingsDto"
+        "401":
+          description: Unauthorized - user not authenticated
   /panels:
     get:
       summary: List panels
@@ -551,6 +622,23 @@ components:
       allOf:
       - $ref: "#/components/schemas/Page_AlertData_"
       - $ref: "#/components/schemas/Slice_AlertData_"
+    MeldSettingsDto:
+      required:
+      - websocketUrl
+      type: object
+      properties:
+        websocketUrl:
+          type: string
+    ObsSettingsDto:
+      required:
+      - websocketUrl
+      type: object
+      properties:
+        websocketUrl:
+          type: string
+        password:
+          type: string
+          nullable: true
     Page_AlertData_:
       required:
       - totalPages
@@ -875,6 +963,25 @@ components:
           type: array
           items:
             type: string
+    UpdateMeldSettingsApi.UpdateMeldSettingsCommand:
+      required:
+      - websocketUrl
+      type: object
+      properties:
+        websocketUrl:
+          minLength: 1
+          type: string
+    UpdateObsSettingsApi.UpdateObsSettingsCommand:
+      required:
+      - websocketUrl
+      type: object
+      properties:
+        websocketUrl:
+          minLength: 1
+          type: string
+        password:
+          type: string
+          nullable: true
     UpdatePanelApi.UpdatePanelCommand:
       required:
       - cards
