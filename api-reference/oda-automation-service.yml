@@ -121,7 +121,8 @@ paths:
       tags:
       - Automation
       summary: List automation rules
-      description: Retrieves paginated automation rules for the authenticated user
+      description: "Retrieves paginated automation rules for the authenticated user,\
+        \ optionally filtered by trigger id"
       operationId: listAutomations
       parameters:
       - name: page
@@ -142,6 +143,13 @@ paths:
       - name: sort
         in: query
         description: "Sorting criteria in format: property,asc|desc"
+        schema:
+          type: string
+      - name: trigger
+        in: query
+        description: "Filter rules that contain a trigger with this id (e.g. command,\
+          \ stream-started, channel-raided, donationgoal-filled)"
+        required: false
         schema:
           type: string
       - name: pageable
