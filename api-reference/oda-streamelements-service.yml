@@ -163,11 +163,20 @@ components:
       required:
       - tip-goal
       - tip-latest
+      - tip-month
+      - tip-session
+      - tip-week
       type: object
       properties:
         tip-latest:
           $ref: "#/components/schemas/StreamElementsSessionView.ViewTip"
         tip-goal:
+          $ref: "#/components/schemas/StreamElementsSessionView.ViewTip"
+        tip-session:
+          $ref: "#/components/schemas/StreamElementsSessionView.ViewTip"
+        tip-week:
+          $ref: "#/components/schemas/StreamElementsSessionView.ViewTip"
+        tip-month:
           $ref: "#/components/schemas/StreamElementsSessionView.ViewTip"
         follower-latest:
           nullable: true
