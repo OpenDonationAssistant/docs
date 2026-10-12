@@ -84,7 +84,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand"
+              $ref: "#/components/schemas/AddHistoryItemCommand"
         required: true
       responses:
         "200":
@@ -201,7 +201,7 @@ paths:
                 $ref: "#/components/schemas/DownloadCsv.CsvStatus"
 components:
   schemas:
-    AddHistoryItemApi.AddHistoryItemCommand:
+    AddHistoryItemCommand:
       type: object
       properties:
         paymentId:
@@ -236,7 +236,7 @@ components:
           type: array
           description: Attached media files
           items:
-            $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.Attachment"
+            $ref: "#/components/schemas/AddHistoryItemCommand.Attachment"
         links:
           type: array
           description: Attached media links
@@ -246,27 +246,27 @@ components:
           type: array
           description: Target goals
           items:
-            $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.TargetGoal"
+            $ref: "#/components/schemas/AddHistoryItemCommand.TargetGoal"
         reelResults:
           type: array
           description: Reel results from social media
           items:
-            $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.ReelResult"
+            $ref: "#/components/schemas/AddHistoryItemCommand.ReelResult"
         actions:
           type: array
           description: Action requests triggered by the donation
           items:
-            $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.ActionRequest"
+            $ref: "#/components/schemas/AddHistoryItemCommand.ActionRequest"
         alertMedia:
           description: Alert media URL
           nullable: true
           allOf:
-          - $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.AlertMedia"
+          - $ref: "#/components/schemas/AddHistoryItemCommand.AlertMedia"
         vote:
           description: Vote information
           nullable: true
           allOf:
-          - $ref: "#/components/schemas/AddHistoryItemApi.AddHistoryItemCommand.Vote"
+          - $ref: "#/components/schemas/AddHistoryItemCommand.Vote"
         event:
           type: string
           description: Event type
@@ -300,7 +300,7 @@ components:
           type: boolean
           description: Whether to add to top
       description: Command to add a new history item
-    AddHistoryItemApi.AddHistoryItemCommand.ActionRequest:
+    AddHistoryItemCommand.ActionRequest:
       type: object
       properties:
         id:
@@ -322,28 +322,28 @@ components:
             type: object
           description: Action payload data
       description: Action request triggered by donation
-    AddHistoryItemApi.AddHistoryItemCommand.AlertMedia:
+    AddHistoryItemCommand.AlertMedia:
       type: object
       properties:
         url:
           type: string
           description: Alert media URL
       description: Alert media
-    AddHistoryItemApi.AddHistoryItemCommand.Attachment:
+    AddHistoryItemCommand.Attachment:
       type: object
       properties:
         id:
           type: string
           description: Attachment ID
       description: Media attachment
-    AddHistoryItemApi.AddHistoryItemCommand.ReelResult:
+    AddHistoryItemCommand.ReelResult:
       type: object
       properties:
         title:
           type: string
           description: Title of the reel
       description: Reel result from social media
-    AddHistoryItemApi.AddHistoryItemCommand.TargetGoal:
+    AddHistoryItemCommand.TargetGoal:
       type: object
       properties:
         goalId:
@@ -353,7 +353,7 @@ components:
           type: string
           description: Goal title
       description: Target goal
-    AddHistoryItemApi.AddHistoryItemCommand.Vote:
+    AddHistoryItemCommand.Vote:
       type: object
       properties:
         id:
