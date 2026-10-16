@@ -308,6 +308,62 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Info"
+  /webhooks:
+    get:
+      operationId: listWebhooks
+      responses:
+        "200":
+          description: listWebhooks 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WebhookController.WebhookDto"
+  /webhooks/commands/create-webhook:
+    post:
+      operationId: createWebhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWebhook.CreateWebhookCommand"
+        required: true
+      responses:
+        "200":
+          description: createWebhook 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateWebhook.WebhookDto"
+  /webhooks/commands/delete-webhook:
+    post:
+      operationId: deleteWebhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteWebhook.DeleteWebhookCommand"
+        required: true
+      responses:
+        "200":
+          description: deleteWebhook 200 response
+  /webhooks/commands/update-webhook:
+    post:
+      operationId: updateWebhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWebhook.UpdateWebhookCommand"
+        required: true
+      responses:
+        "200":
+          description: updateWebhook 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateWebhook.WebhookDto"
 components:
   schemas:
     Amount:
@@ -364,7 +420,46 @@ components:
       properties:
         password:
           type: string
+    CreateWebhook.CreateWebhookCommand:
+      required:
+      - enabled
+      - type
+      - url
+      type: object
+      properties:
+        url:
+          type: string
+        type:
+          $ref: "#/components/schemas/Webhook.Type"
+        enabled:
+          type: boolean
+    CreateWebhook.WebhookDto:
+      required:
+      - enabled
+      - id
+      - recipientId
+      - type
+      - url
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        url:
+          type: string
+        type:
+          $ref: "#/components/schemas/Webhook.Type"
+        enabled:
+          type: boolean
     DeleteToken.DeleteTokenCommand:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+    DeleteWebhook.DeleteWebhookCommand:
       required:
       - id
       type: object
@@ -595,3 +690,62 @@ components:
       properties:
         email:
           type: string
+    UpdateWebhook.UpdateWebhookCommand:
+      required:
+      - enabled
+      - id
+      - type
+      - url
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        type:
+          $ref: "#/components/schemas/Webhook.Type"
+        enabled:
+          type: boolean
+    UpdateWebhook.WebhookDto:
+      required:
+      - enabled
+      - id
+      - recipientId
+      - type
+      - url
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        url:
+          type: string
+        type:
+          $ref: "#/components/schemas/Webhook.Type"
+        enabled:
+          type: boolean
+    Webhook.Type:
+      type: string
+      enum:
+      - DISCORD
+      - TELEGRAM
+    WebhookController.WebhookDto:
+      required:
+      - enabled
+      - id
+      - recipientId
+      - type
+      - url
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        url:
+          type: string
+        type:
+          $ref: "#/components/schemas/Webhook.Type"
+        enabled:
+          type: boolean
