@@ -46,6 +46,7 @@ jobs:
           - history-service
           - kick-service
           - news-service
+          - recipient-service
     steps:
       - uses: actions/checkout@v3
 
