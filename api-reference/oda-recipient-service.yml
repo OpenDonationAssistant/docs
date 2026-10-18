@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.15.0
+  version: 0.17.0
 paths:
   /otp/create:
     post:
@@ -428,9 +428,15 @@ components:
       type: object
       properties:
         url:
+          minLength: 1
           type: string
         type:
           $ref: "#/components/schemas/Webhook.Type"
+        settings:
+          type: object
+          additionalProperties:
+            type: object
+          nullable: true
         enabled:
           type: boolean
     CreateWebhook.WebhookDto:
@@ -438,6 +444,7 @@ components:
       - enabled
       - id
       - recipientId
+      - settings
       - type
       - url
       type: object
@@ -450,6 +457,10 @@ components:
           type: string
         type:
           $ref: "#/components/schemas/Webhook.Type"
+        settings:
+          type: object
+          additionalProperties:
+            type: object
         enabled:
           type: boolean
     DeleteToken.DeleteTokenCommand:
@@ -465,6 +476,7 @@ components:
       type: object
       properties:
         id:
+          minLength: 1
           type: string
     ExchangeOtpCommand:
       type: object
@@ -692,25 +704,34 @@ components:
           type: string
     UpdateWebhook.UpdateWebhookCommand:
       required:
-      - enabled
       - id
-      - type
-      - url
       type: object
       properties:
         id:
+          minLength: 1
           type: string
         url:
+          pattern: .*\S.*
           type: string
+          nullable: true
         type:
-          $ref: "#/components/schemas/Webhook.Type"
+          nullable: true
+          allOf:
+          - $ref: "#/components/schemas/Webhook.Type"
+        settings:
+          type: object
+          additionalProperties:
+            type: object
+          nullable: true
         enabled:
           type: boolean
+          nullable: true
     UpdateWebhook.WebhookDto:
       required:
       - enabled
       - id
       - recipientId
+      - settings
       - type
       - url
       type: object
@@ -723,6 +744,10 @@ components:
           type: string
         type:
           $ref: "#/components/schemas/Webhook.Type"
+        settings:
+          type: object
+          additionalProperties:
+            type: object
         enabled:
           type: boolean
     Webhook.Type:
@@ -735,6 +760,7 @@ components:
       - enabled
       - id
       - recipientId
+      - settings
       - type
       - url
       type: object
@@ -747,5 +773,9 @@ components:
           type: string
         type:
           $ref: "#/components/schemas/Webhook.Type"
+        settings:
+          type: object
+          additionalProperties:
+            type: object
         enabled:
           type: boolean
