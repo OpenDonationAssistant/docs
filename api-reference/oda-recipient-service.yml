@@ -238,6 +238,8 @@ paths:
                 $ref: "#/components/schemas/GetAccessToken.AccessToken"
         "401":
           description: Unauthorized or not found
+        "502":
+          description: Token provider failed to return a valid access token
   /recipients/tokens/refresh:
     post:
       operationId: refresh
