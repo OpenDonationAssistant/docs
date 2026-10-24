@@ -424,7 +424,6 @@ components:
           type: string
     CreateWebhook.CreateWebhookCommand:
       required:
-      - enabled
       - type
       - url
       type: object
@@ -441,6 +440,7 @@ components:
           nullable: true
         enabled:
           type: boolean
+          nullable: true
     CreateWebhook.WebhookDto:
       required:
       - enabled
@@ -713,7 +713,6 @@ components:
           minLength: 1
           type: string
         url:
-          pattern: .*\S.*
           type: string
           nullable: true
         type:
