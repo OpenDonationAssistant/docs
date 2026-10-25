@@ -1,0 +1,110 @@
+openapi: 3.0.1
+info:
+  title: oda-font-service
+  version: 1.0.0
+tags:
+- name: Fonts
+  description: Font management commands
+paths:
+  /fonts:
+    get:
+      tags:
+      - Fonts
+      summary: List fonts
+      description: Retrieves a list of fonts filtered by optional criteria for the
+        authenticated user
+      operationId: listFonts
+      parameters:
+      - name: subset
+        in: query
+        description: "Unicode subset to filter fonts (e.g., 'latin', 'cyrillic')"
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      - name: category
+        in: query
+        description: "Font category to filter by (e.g., 'serif', 'sans-serif')"
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      - name: name
+        in: query
+        description: Font name to search for (partial match)
+        explode: false
+        schema:
+          type: string
+          nullable: true
+      responses:
+        "200":
+          description: Fonts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FontApi.FontDto"
+        "401":
+          description: Unauthorized - user not authenticated
+      security:
+      - BearerAuth: []
+  /fonts/commands/upload:
+    put:
+      tags:
+      - Fonts
+      summary: Upload font
+      description: Uploads a TTF font file and stores it in the user's font collection
+      operationId: upload
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+            encoding:
+              file:
+                contentType: application/octet-stream
+                explode: false
+        required: true
+      responses:
+        "200":
+          description: Font uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FontApi.FontDto"
+        "401":
+          description: Unauthorized - user not authenticated
+        "413":
+          description: Payload too large - font exceeds the maximum allowed file size
+      security:
+      - BearerAuth: []
+components:
+  schemas:
+    FontApi.FontDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Font name identifier
+          example: Roboto
+        displayName:
+          type: string
+          description: Display name of the font
+          example: Roboto Regular
+        type:
+          type: string
+          description: Font type
+          example: sans-serif
+        sources:
+          type: object
+          additionalProperties:
+            type: string
+          description: Map of source identifiers to URLs
+          example:
+            regular: https://fonts.gstatic.com/roboto/regular.woff2
+      description: Font information
