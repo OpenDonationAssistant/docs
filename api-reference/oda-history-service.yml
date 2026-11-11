@@ -4,7 +4,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 0.19.0
+  version: 0.20.0
 paths:
   /history:
     get:
@@ -29,7 +29,8 @@ paths:
           format: int32
       - name: sort
         in: query
-        description: "Sorting criteria in format: property,asc|desc"
+        description: "Sorting criteria in format: property,asc|desc. Examples: 'timestamp,desc',\
+          \ 'lastModified,asc' (use lastModified ordering for delta/sync reads)"
         schema:
           type: string
       - name: systems
@@ -57,6 +58,24 @@ paths:
           nullable: true
       - name: before
         in: query
+        explode: false
+        schema:
+          type: string
+          format: date-time
+          nullable: true
+      - name: lastModifiedAfter
+        in: query
+        description: "Only return items whose lastModified is strictly after this\
+          \ ISO-8601 instant. Combine with sort=lastModified,asc for delta reads."
+        explode: false
+        schema:
+          type: string
+          format: date-time
+          nullable: true
+      - name: lastModifiedBefore
+        in: query
+        description: Only return items whose lastModified is strictly before this
+          ISO-8601 instant.
         explode: false
         schema:
           type: string
@@ -488,6 +507,10 @@ components:
           additionalProperties:
             type: object
           description: Additional metadata associated with the history item
+        lastModified:
+          type: string
+          description: Timestamp when the history item was last modified
+          format: date-time
       description: History item representing a donation or event
     HistoryItemData.ActionRequest:
       type: object
@@ -698,9 +721,12 @@ components:
       - ascending
       - direction
       - ignoreCase
+      - nullOrdering
       - property
       type: object
       properties:
+        nullOrdering:
+          $ref: "#/components/schemas/Sort.Order.NullOrdering"
         ignoreCase:
           type: boolean
         direction:
@@ -714,5 +740,11 @@ components:
       enum:
       - ASC
       - DESC
+    Sort.Order.NullOrdering:
+      type: string
+      enum:
+      - NONE
+      - FIRST
+      - LAST
     Void:
       type: object
