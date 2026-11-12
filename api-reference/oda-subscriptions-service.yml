@@ -421,9 +421,12 @@ components:
       - ascending
       - direction
       - ignoreCase
+      - nullOrdering
       - property
       type: object
       properties:
+        nullOrdering:
+          $ref: "#/components/schemas/Sort.Order.NullOrdering"
         ignoreCase:
           type: boolean
         direction:
@@ -437,6 +440,12 @@ components:
       enum:
       - ASC
       - DESC
+    Sort.Order.NullOrdering:
+      type: string
+      enum:
+      - NONE
+      - FIRST
+      - LAST
     SubscriptionData:
       required:
       - events
