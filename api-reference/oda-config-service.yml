@@ -184,10 +184,13 @@ components:
       type: object
       properties:
         recipientId:
+          minLength: 1
           type: string
         url:
+          minLength: 1
           type: string
         displayName:
+          minLength: 1
           type: string
         socialLinks:
           type: array
@@ -200,6 +203,8 @@ components:
       type: object
       properties:
         platform:
+          minLength: 1
           type: string
         url:
+          minLength: 1
           type: string
