@@ -16,15 +16,27 @@ paths:
         schema:
           type: string
           nullable: true
+      - name: page
+        in: query
+        explode: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+      - name: size
+        in: query
+        explode: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
       responses:
         "200":
           description: getCatalog 200 response
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CatalogItemView"
+                $ref: "#/components/schemas/CatalogPage"
   /files/{name}:
     get:
       operationId: get
@@ -40,8 +52,7 @@ paths:
           content:
             application/octet-stream:
               schema:
-                type: string
-                format: binary
+                type: object
     put:
       operationId: put
       parameters:
@@ -73,6 +84,10 @@ paths:
       responses:
         "200":
           description: put 200 response
+          content:
+            text/plain:
+              schema:
+                type: object
 components:
   schemas:
     CatalogItemView:
@@ -97,3 +112,24 @@ components:
           type: string
         url:
           type: string
+    CatalogPage:
+      required:
+      - items
+      - page
+      - size
+      - total
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CatalogItemView"
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        total:
+          type: integer
+          format: int64
